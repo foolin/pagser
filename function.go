@@ -52,12 +52,12 @@ func attrInt(node *goquery.Selection, args ...string) (out interface{}, err erro
 	}
 	name := args[0]
 	defaultValue := args[1]
-	val := node.AttrOr(name, defaultValue)
-	vint, err := strconv.Atoi(val)
+	attrVal := node.AttrOr(name, defaultValue)
+	outVal, err := strconv.Atoi(attrVal)
 	if err != nil {
 		return strconv.Atoi(defaultValue)
 	}
-	return vint, nil
+	return outVal, nil
 }
 
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) error {

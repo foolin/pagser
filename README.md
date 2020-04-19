@@ -178,27 +178,122 @@ markdown.Register(p)
 
 ```
 
-#### Write self functions
+#### Write my function
 
+Write function format:
 ```go
 
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 ```
 
+1. Global function:
+
+Example: 
+```go
+
+//global function need call pagser.RegisterFunc("myAttrInt", myAttrInt) before use it.
+func myAttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 2 {
+		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
+	}
+	name := args[0]
+	defaultValue := args[1]
+	attrVal := node.AttrOr(name, defaultValue)
+	outVal, err := strconv.Atoi(attrVal)
+	if err != nil {
+		return strconv.Atoi(defaultValue)
+	}
+	return outVal, nil
+}
+
+type MyStruct struct{
+  Attr int    `pagser:"->myAttrInt(id, -1)"`
+}
+
+func main(){
+
+	p := pagser.New()
+
+	//Register AttrInt
+	p.RegisterFunc("myAttrInt", myAttrInt)
+
+    //Todo
+
+	//data parser model
+	var page MyStruct
+	//parse html data
+	err := p.Parse(&page, rawPageHtml)
+
+    //...
+}
+
+```
+
+
+2. Struct function:
+
+
+Example: 
+```go
+
+type MyStruct struct{
+  Attr int    `pagser:"->myAttrInt(id, -1)"`
+}
+
+//Struct function not need register.
+func (s MyStruct) myAttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 2 {
+		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
+	}
+	name := args[0]
+	defaultValue := args[1]
+	attrVal := node.AttrOr(name, defaultValue)
+	outVal, err := strconv.Atoi(attrVal)
+	if err != nil {
+		return strconv.Atoi(defaultValue)
+	}
+	return outVal, nil
+}
+
+
+func main(){
+
+	p := pagser.New()
+
+    //Todo
+
+	//data parser model
+	var page MyStruct
+	//parse html data
+	err := p.Parse(&page, rawPageHtml)
+
+    //...
+}
+
+```
 
 # Colly
 Work with colly:
-```colly
+```go
+
+p := pagser.New()
+
 
 // On every a element which has href attribute call callback
 collector.OnHTML("body", func(e *colly.HTMLElement) {
-    
+	//data parser model
+	var page MyStruct
+    //parse html data
+    err := p.ParseSelection(&page, e.Dom)
+
 })
 
 ```
 
 # Example
+
+[See Examples](https://github.com/foolin/pagser/tree/master/_examples)
 
 # Dependences
 - github.com/PuerkitoBio/goquery
