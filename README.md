@@ -152,10 +152,7 @@ type Config struct {
 ```
 [goquery selector]->[function]
 ```
-example:
-
-
-
+Example:
 ```go
 
 type ExamData struct {
@@ -177,15 +174,15 @@ type ExamData struct {
 - html()
 - text()
 - attr(name)
-- attrInt(name, defaultValue)
+- attrInt(name, defaultValue) //covert attr value to int
 - outerHtml()
-- value()
+- value(name) //alias for `goquery.AttrOr("value", "")`
 
 #### Extensions functions
-- Markdown()
-- UgcHtml()
+- Markdown() //convert html to markdown format.
+- UgcHtml() //sanitize html
 
-extensions function need register:
+Extensions function need register, like:
 ```go
 import "github.com/foolin/pagser/extensions/markdown"
 
@@ -198,7 +195,7 @@ markdown.Register(p)
 
 #### Write my function
 
-Write function format:
+**Function interface**
 ```go
 
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
@@ -287,7 +284,8 @@ func main(){
 
 ```
 
-# Colly
+# Colly Example
+
 Work with colly:
 ```go
 
@@ -298,8 +296,8 @@ p := pagser.New()
 collector.OnHTML("body", func(e *colly.HTMLElement) {
 	//data parser model
 	var page MyStruct
-    //parse html data
-    err := p.ParseSelection(&page, e.Dom)
+	//parse html data
+	err := p.ParseSelection(&page, e.Dom)
 
 })
 
