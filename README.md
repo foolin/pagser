@@ -4,6 +4,16 @@ Pagser inspired by  <u>**pag**</u>e par<u>**ser**</u>,
 an HTML deserialization to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags。
 It's simple, easy, extensible, configurable parsing library from [scrago](https://github.com/foolin/scrago).
 
+## Features
+
+* **Simple** - use golang struct tag syntax.
+* **Easy** - easy use for your spider/crawler application.
+* **Extensible** - Support for extension functions.
+* **Struct tag** - Grammar is simple, like \`pagser:"a->attr(href)"\`.
+* **Nested Structure** - Support Nested Structure for node.
+* **Configurable** - Support configuration.
+* **GoQuery/Colly** - Support all [goquery](https://github.com/PuerkitoBio/goquery) framework, such as [go-colly](https://github.com/gocolly/colly).
+
 ## Install
 
 ```bash
@@ -14,16 +24,6 @@ go get github.com/foolin/pagser
 
 See [Pagser](https://pkg.go.dev/github.com/foolin/pagser)
 
-
-## Features
-
-* **Simple** - use golang struct tag syntax.
-* **Easy** - easy use for your spider/crawler application.
-* **Extensible** - Support for extension functions.
-* **Struct tag** - Grammar is simple, like \`pagser:"a->attr(href)"\`.
-* **Nested Structure** - Support Nested Structure for node.
-* **Configurable** - Support configuration.
-* **GoQuery/Colly** - Support all [goquery](https://github.com/PuerkitoBio/goquery) framework, such as [go-colly](https://github.com/gocolly/colly).
 
 # Usage
 
@@ -132,6 +132,20 @@ Page data json:
 
 ```
 
+# Configuration
+
+```go
+
+type Config struct {
+	TagerName    string //struct tag name, default is `pagser`
+	FuncSymbol   string //Function symbol, default is `->`
+	IgnoreSymbol string //Ignore symbol, default is `-`
+	Debug        bool   //Debug mode, debug will print some log, default is `false`
+}
+
+```
+
+
 
 # Struct tag grammar
 
@@ -148,10 +162,13 @@ type ExamData struct {
 	Herf string `pagser:".navLink li a->attr(href)"`
 }
 
-selector: .navLink li a
-function: attr(href)
-
 ```
+
+> 1.Struct tag name: `pagser`  
+> 2.[goquery](https://github.com/PuerkitoBio/goquery) selector: `.navLink li a`   
+> 3.Function symbol: `->`  
+> 4.Function name: `attr`  
+> 5.Function arguments: `href` 
 
 # Functions
 
@@ -187,9 +204,7 @@ type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, er
 
 ```
 
-1. Global function:
-
-Example: 
+**1. Write global function:**
 ```go
 
 //global function need call pagser.RegisterFunc("myAttrInt", myAttrInt) before use it.
@@ -231,10 +246,7 @@ func main(){
 ```
 
 
-2. Struct function:
-
-
-Example: 
+**2. Write struct function:**
 ```go
 
 type MyStruct struct{
@@ -249,7 +261,8 @@ func (s MyStruct) myAttrInt(node *goquery.Selection, args ...string) (out interf
 	name := args[0]
 	defaultValue := args[1]
 	attrVal := node.AttrOr(name, defaultValue)
-	outVal, err := strconv.Atoi(attrVal)
+	outVal, err := strconv.At
+oi(attrVal)
 	if err != nil {
 		return strconv.Atoi(defaultValue)
 	}

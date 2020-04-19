@@ -16,20 +16,6 @@ type Pagser struct {
 	funcs  map[string]CallFunc // name => func
 }
 
-type Config struct {
-	TagerName    string //pagser
-	FuncSymbol   string //->
-	IgnoreSymbol string //-
-	Debug        bool   //false
-}
-
-var defaultCfg = Config{
-	TagerName:    "pagser",
-	FuncSymbol:   "->",
-	IgnoreSymbol: "-",
-	Debug:        false,
-}
-
 func New() *Pagser {
 	p, _ := NewWithConfig(DefaultConfig())
 	return p
