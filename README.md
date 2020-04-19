@@ -6,13 +6,13 @@
 
 ## Features
 
-* **Simple** - use golang struct tag syntax.
-* **Easy** - easy use for your spider/crawler application.
+* **Simple** - Use golang struct tag syntax.
+* **Easy** - Easy use for your spider/crawler/colly application.
 * **Extensible** - Support for extension functions.
-* **Struct tag** - Grammar is simple, like \`pagser:"a->attr(href)"\`.
+* **Struct tag grammar** - Grammar is simple, like \`pagser:"a->attr(href)"\`.
 * **Nested Structure** - Support Nested Structure for node.
 * **Configurable** - Support configuration.
-* **GoQuery/Colly** - Support all [goquery](https://github.com/PuerkitoBio/goquery) framework, such as [go-colly](https://github.com/gocolly/colly).
+* **GoQuery/Colly** - Support all [goquery](https://github.com/PuerkitoBio/goquery) project, such as [go-colly](https://github.com/gocolly/colly).
 
 ## Install
 
