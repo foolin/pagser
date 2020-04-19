@@ -19,7 +19,6 @@ type HtmlPage struct {
 	NavID    []int    `pagser:".navlink li->AttrInt(id, '-1')"`
 	NavTexts []string `pagser:".navlink li"`
 	NavMods  []string `pagser:".navlink li->GetMod()"`
-	Text string `pagser:"->text()"`
 }
 
 // this method will auto call, not need register.

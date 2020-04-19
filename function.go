@@ -1,17 +1,11 @@
 package pagser
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/mattn/godown"
-	"github.com/microcosm-cc/bluemonday"
-	"regexp"
+	"strconv"
 	"strings"
 )
-
-//var regMutilSpaceLine = regexp.MustCompile("(\\r?\\n\\s*){2,}")
-var regMutilSpaceLine = regexp.MustCompile("(\\r?\\n+\\s*){2,}")
 
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
@@ -19,38 +13,9 @@ var sysFuncs = map[string]CallFunc{
 	"html":      html,
 	"text":      text,
 	"attr":      attr,
-	"markdown":  markdown,
-	"ugcHtml":   ugcHtml,
+	"attrInt":   attrInt,
 	"outerHtml": outHtml,
 	"value":     value,
-}
-
-func markdown(node *goquery.Selection, args ...string) (interface{}, error) {
-	var buf bytes.Buffer
-	html, err := ugcHtml(node)
-	if err != nil {
-		return "", err
-	}
-	err = godown.Convert(&buf, strings.NewReader(html.(string)), &godown.Option{
-		Style:  true,
-		Script: false,
-	})
-	md := buf.String()
-	if err != nil {
-		return md, err
-	}
-	md = regMutilSpaceLine.ReplaceAllString(md, "\n\n")
-	return md, err
-}
-
-func ugcHtml(node *goquery.Selection, args ...string) (interface{}, error) {
-	html, err := goquery.OuterHtml(node)
-	if err != nil {
-		return html, err
-	}
-	p := bluemonday.UGCPolicy()
-	// The policy can then be used to sanitize lots of input and it is safe to use the policy in multiple goroutines
-	return p.Sanitize(html), nil
 }
 
 func html(node *goquery.Selection, args ...string) (out interface{}, err error) {
@@ -79,6 +44,20 @@ func attr(node *goquery.Selection, args ...string) (out interface{}, err error) 
 	}
 	val, _ := node.Attr(args[0])
 	return val, nil
+}
+
+func attrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 2 {
+		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
+	}
+	name := args[0]
+	defaultValue := args[1]
+	val := node.AttrOr(name, defaultValue)
+	vint, err := strconv.Atoi(val)
+	if err != nil {
+		return strconv.Atoi(defaultValue)
+	}
+	return vint, nil
 }
 
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) error {

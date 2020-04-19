@@ -2,12 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"midubi.com/common/pkg/pagser"
-	"strconv"
-	"strings"
+	"github.com/foolin/pagser"
 )
 
 const rawPageHtml = `
@@ -15,11 +11,11 @@ const rawPageHtml = `
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Pagser Example</title>
+    <title>Pagser Title</title>
 </head>
 
 <body>
-	<h1> Test H1 Title</h1>
+	<h1>H1 Pagser Example</h1>
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
@@ -34,61 +30,33 @@ const rawPageHtml = `
 </html>
 `
 
-func main() {
-	//New default config
-	p := pagser.New()
-
-	/*
-		//New with config
-		cfg := pagser.DefaultConfig()
-		cfg.Debug = true
-		p := pagser.MustNewWithConfig(cfg)
-	*/
-
-	p.RegisterFunc("AttrInt", AttrInt)
-
-	var page ExampPage
-	err := p.Parse(&page, rawPageHtml)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(page))
-}
-
 type ExampPage struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
+		ID   int    `pagser:"->attrInt(id, -1)"`
 		Name string `pagser:"a->attr(href)"`
 		Url  string `pagser:"a"`
 	} `pagser:".navlink li"`
-	NavID    []int    `pagser:".navlink li->AttrInt(id, '-1')"`
-	NavTexts []string `pagser:".navlink li"`
-	NavMods  []string `pagser:".navlink li->GetMod()"`
 }
 
-// this method will auto call, not need register.
-func (h ExampPage) GetMod(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
-	href := node.Find("a").AttrOr("href", "")
-	fmt.Printf("href: %v\n", href)
-	if idx := strings.LastIndex(href, "/"); idx != -1 {
-		return href[idx+1:], nil
-	}
-	return "", nil
-}
+func main() {
+	//New default config
+	p := pagser.New()
 
-// this global method must call pagser.RegisterFunc("AttrInt", AttrInt).
-func AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//fmt.Printf("args: %v", args)
-	if len(args) < 2 {
-		return -1, errors.New("AttrInt must has two args, such as AttrInt(id, 0)")
+	//data parser model
+	var page ExampPage
+
+	//parse html data
+	err := p.Parse(&page, rawPageHtml)
+
+	//check error
+	if err != nil {
+		panic(err)
 	}
-	value := node.AttrOr(args[0], "")
-	if value == "" {
-		return -1, nil
-	}
-	return strconv.Atoi(value)
+
+	//print data
+	fmt.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(page))
 }
 
 func toJson(v interface{}) string {

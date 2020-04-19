@@ -91,6 +91,6 @@ func parseFuncParams(args string) []string {
 }
 
 func prettyJson(v interface{}) string {
-	bytes, _ := json.MarshalIndent(v, "", "  ")
+	bytes, _ := json.MarshalIndent(v, "", "\t")
 	return string(bytes)
 }
