@@ -161,7 +161,6 @@ example:
 type ExamData struct {
 	Herf string `pagser:".navLink li a->attr(href)"`
 }
-
 ```
 
 > 1.Struct tag name: `pagser`  
@@ -169,6 +168,8 @@ type ExamData struct {
 > 3.Function symbol: `->`  
 > 4.Function name: `attr`  
 > 5.Function arguments: `href` 
+
+![grammar](grammar.png)
 
 # Functions
 
