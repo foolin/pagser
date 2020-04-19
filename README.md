@@ -2,7 +2,7 @@
 
 **Pagser** inspired by  <u>**pag**</u>e par<u>**ser**</u>。
 
-**Pagser** is an simple, easy, extensible, configurable HTML deserialization to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags, It's parser library from [scrago](https://github.com/foolin/scrago).
+**Pagser** is an simple, easy, extensible, configurable HTML page parser to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags, It's parser library from [scrago](https://github.com/foolin/scrago).
 
 ## Features
 
