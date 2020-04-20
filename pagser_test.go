@@ -1,10 +1,8 @@
 package pagser
 
 import (
-	"errors"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"strconv"
 	"strings"
 	"testing"
 )
@@ -20,11 +18,11 @@ type HtmlPage struct {
 	H1     string `pagser:"h1->text()"`
 	H1HTML string `pagser:"h1->outerHtml()"`
 	Navs   []struct {
+		ID   int    `pagser:"a->attrInt(id, -1)"`
 		Name string `pagser:"a->attr(href)"`
 		Url  string `pagser:"a"`
 	} `pagser:".navlink li"`
-	NavID      []int    `pagser:".navlink li->AttrInt(id, '-1')"`
-	NavTexts   []string `pagser:".navlink li"`
+	NavNames   []string `pagser:".navlink li"`
 	NavMods    []string `pagser:".navlink li->GetMod()"`
 	FirstLink  string   `pagser:".navlink li:first-child->html()"`
 	InputValue string   `pagser:"input[name='feedback']->value()"`
@@ -38,19 +36,6 @@ func (h HtmlPage) GetMod(node *goquery.Selection, args ...string) (out interface
 		return href[idx+1:], nil
 	}
 	return "", nil
-}
-
-// this global method must call pagser.RegisterFunc("AttrInt", AttrInt).
-func AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//fmt.Printf("args: %v", args)
-	if len(args) < 2 {
-		return -1, errors.New("AttrInt must has two args, such as AttrInt(id, 0)")
-	}
-	value := node.AttrOr(args[0], "")
-	if value == "" {
-		return -1, nil
-	}
-	return strconv.Atoi(value)
 }
 
 const rawPpageHtml = `
@@ -78,14 +63,10 @@ const rawPpageHtml = `
 </html>
 `
 
-func TestParserDocument(t *testing.T) {
+func TestParse(t *testing.T) {
 	cfg := DefaultConfig()
 	cfg.Debug = true
 	p := MustNewWithConfig(cfg)
-
-	//p := New()
-
-	p.RegisterFunc("AttrInt", AttrInt)
 
 	var data HtmlPage
 	err := p.Parse(&data, rawPpageHtml)
