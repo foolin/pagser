@@ -312,6 +312,8 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 # Dependences
 - github.com/PuerkitoBio/goquery
 - github.com/spf13/cast
+
+**Extentions:**
 - github.com/mattn/godown
 - github.com/microcosm-cc/bluemonday
 
