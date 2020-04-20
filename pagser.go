@@ -10,6 +10,7 @@ package pagser
 
 import "errors"
 
+// Pagser the page parser
 type Pagser struct {
 	config Config
 	tagers map[string]*Tager   // tager value => Tager
