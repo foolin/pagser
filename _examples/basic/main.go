@@ -36,7 +36,7 @@ type ExampPage struct {
 	Navs  []struct {
 		ID   int    `pagser:"->attrInt(id, -1)"`
 		Name string `pagser:"a"`
-		Url  string `pagser:"a->attrx(href)"`
+		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
 }
 
