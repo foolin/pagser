@@ -66,8 +66,8 @@ type ExampPage struct {
 	H1    string `pagser:"h1"`
 	Navs  []struct {
 		ID   int    `pagser:"->attrInt(id, -1)"`
-		Name string `pagser:"a->attr(href)"`
-		Url  string `pagser:"a"`
+		Name string `pagser:"a"`
+		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
 }
 
@@ -108,23 +108,23 @@ Page data json:
 	"Navs": [
 		{
 			"ID": -1,
-			"Name": "/",
-			"Url": "Index"
+			"Name": "Index",
+			"Url": "/"
 		},
 		{
 			"ID": 2,
-			"Name": "/list/web",
-			"Url": "Web page"
+			"Name": "Web page",
+			"Url": "/list/web"
 		},
 		{
 			"ID": 3,
-			"Name": "/list/pc",
-			"Url": "Pc Page"
+			"Name": "Pc Page",
+			"Url": "/list/pc"
 		},
 		{
 			"ID": 4,
-			"Name": "/list/mobile",
-			"Url": "Mobile Page"
+			"Name": "Mobile Page",
+			"Url": "/list/mobile"
 		}
 	]
 }
