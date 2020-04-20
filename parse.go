@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Parse parse html to struct
 func (p *Pagser) Parse(v interface{}, document string) (err error) {
 	reader, err := goquery.NewDocumentFromReader(strings.NewReader(document))
 	if err != nil {
@@ -16,10 +17,12 @@ func (p *Pagser) Parse(v interface{}, document string) (err error) {
 	return p.ParseDocument(v, reader)
 }
 
+// ParseDocument parse document to struct
 func (p *Pagser) ParseDocument(v interface{}, document *goquery.Document) (err error) {
 	return p.ParseSelection(v, document.Selection)
 }
 
+// ParseSelection parse selection to struct
 func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (err error) {
 	objRefType := reflect.TypeOf(v)
 	objRefValue := reflect.ValueOf(v)
@@ -39,7 +42,7 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 		//tagValue := fieldType.Tag.Get(parserTagName)
 		tagValue, tagOk := fieldType.Tag.Lookup(p.config.TagerName)
 		if !tagOk {
-			if p.config.Debug{
+			if p.config.Debug {
 				fmt.Printf("[WARN] not found tager name=[%v] in field: %v, eg: `%v:\".navlink a->attr(href)\"`\n",
 					p.config.TagerName, fieldType.Name, p.config.TagerName)
 			}

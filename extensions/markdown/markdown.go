@@ -12,6 +12,7 @@ import (
 //var regMutilSpaceLine = regexp.MustCompile("(\\r?\\n\\s*){2,}")
 var regMutilSpaceLine = regexp.MustCompile("(\\r?\\n+\\s*){2,}")
 
+// Markdown convert html to markdown function
 func Markdown(node *goquery.Selection, args ...string) (interface{}, error) {
 	var buf bytes.Buffer
 	html, err := node.Html()
@@ -30,6 +31,7 @@ func Markdown(node *goquery.Selection, args ...string) (interface{}, error) {
 	return md, err
 }
 
+// Register register function name as `Markdown`
 func Register(p *pagser.Pagser) {
 	p.RegisterFunc("Markdown", Markdown)
 }

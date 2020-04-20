@@ -6,6 +6,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
+// UgcHtml sanitise HTML5 documents safely function
 func UgcHtml(node *goquery.Selection, args ...string) (interface{}, error) {
 	html, err := goquery.OuterHtml(node)
 	if err != nil {
@@ -16,6 +17,7 @@ func UgcHtml(node *goquery.Selection, args ...string) (interface{}, error) {
 	return p.Sanitize(html), nil
 }
 
+// Register register function name as `UgcHtml`
 func Register(p *pagser.Pagser) {
 	p.RegisterFunc("UgcHtml", UgcHtml)
 }

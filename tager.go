@@ -20,6 +20,7 @@ var rxFunc = regexp.MustCompile("^\\s*([a-zA-Z]+)\\s*(\\(([^\\)]*)\\))?\\s*$")
 //	ignoreTagSymbol = "-"
 //)
 
+// Tager struct tag info
 type Tager struct {
 	Selector   string
 	FuncName   string

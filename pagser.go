@@ -16,11 +16,13 @@ type Pagser struct {
 	funcs  map[string]CallFunc // name => func
 }
 
+// New create client
 func New() *Pagser {
 	p, _ := NewWithConfig(DefaultConfig())
 	return p
 }
 
+// MustNewWithConfig create client with config
 func MustNewWithConfig(cfg Config) *Pagser {
 	pagser, err := NewWithConfig(cfg)
 	if err != nil {
@@ -29,6 +31,7 @@ func MustNewWithConfig(cfg Config) *Pagser {
 	return pagser
 }
 
+// MustNewWithConfig create client with config and error
 func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.TagerName == "" {
 		return nil, errors.New("TagerName must not empty")
@@ -46,6 +49,7 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 	}, nil
 }
 
+// DefaultConfig the default config
 func DefaultConfig() Config {
 	return defaultCfg
 }

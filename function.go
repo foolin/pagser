@@ -60,6 +60,7 @@ func attrInt(node *goquery.Selection, args ...string) (out interface{}, err erro
 	return outVal, nil
 }
 
+// RegisterFunc register function for parse
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) error {
 	p.funcs[name] = fn
 	return nil
