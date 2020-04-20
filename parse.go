@@ -164,7 +164,7 @@ func (p *Pagser) callFuncFieldValue(objRefValue reflect.Value, selTag *Tager, no
 		if fn, ok := p.funcs[selTag.FuncName]; ok {
 			outValue, err := fn(node, selTag.FuncParams...)
 			if err != nil {
-				return nil, fmt.Errorf("call registed func %v error: %v", selTag.FuncName, err)
+				return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
 			}
 			return outValue, nil
 		} else {
