@@ -9,16 +9,25 @@ import (
 	"testing"
 )
 
+//	"html":      html,
+//	"text":      text,
+//	"attr":      attr,
+//	"attrInt":   attrInt,
+//	"outerHtml": outHtml,
+//	"value":     value,
 type HtmlPage struct {
-	Title string `pagser:"title"`
-	H1    string `pagser:"h1"`
-	Navs  []struct {
+	Title  string `pagser:"title"`
+	H1     string `pagser:"h1->text()"`
+	H1HTML string `pagser:"h1->outerHtml()"`
+	Navs   []struct {
 		Name string `pagser:"a->attr(href)"`
 		Url  string `pagser:"a"`
 	} `pagser:".navlink li"`
-	NavID    []int    `pagser:".navlink li->AttrInt(id, '-1')"`
-	NavTexts []string `pagser:".navlink li"`
-	NavMods  []string `pagser:".navlink li->GetMod()"`
+	NavID      []int    `pagser:".navlink li->AttrInt(id, '-1')"`
+	NavTexts   []string `pagser:".navlink li"`
+	NavMods    []string `pagser:".navlink li->GetMod()"`
+	FirstLink  string   `pagser:".navlink li:first-child->html()"`
+	InputValue string   `pagser:"input[name='feedback']->value()"`
 }
 
 // this method will auto call, not need register.
@@ -53,7 +62,7 @@ const rawPpageHtml = `
 </head>
 
 <body>
-	<h1> Test H1 Title</h1>
+	<h1>Pagser H1 Title</h1>
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
@@ -64,6 +73,7 @@ const rawPpageHtml = `
 			</ul>
 		</div>
 	</div>
+	<input name="feedback" value="hello@example.com" /> 
 </body>
 </html>
 `
