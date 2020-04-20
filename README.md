@@ -1,5 +1,7 @@
 # Pagser
 
+[![GoDoc Widget]][GoDoc] [![Travis Widget]][Travis] [![GoReportCard Widget]][GoReportCard]
+
 **Pagser** inspired by  <u>**pag**</u>e par<u>**ser**</u>。
 
 **Pagser** is a simple, easy, extensible, configurable HTML parser to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags, It's parser library from [scrago](https://github.com/foolin/scrago).
@@ -315,3 +317,9 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 
 
 
+[GoDoc]: https://godoc.org/github.com/foolin/pagser
+[GoDoc Widget]: https://godoc.org/github.com/foolin/pagser?status.svg
+[Travis]: https://travis-ci.org/foolin/pagser
+[Travis Widget]: https://travis-ci.org/foolin/pagser.svg?branch=master
+[GoReportCard]: https://goreportcard.com/report/github.com/foolin/pagser
+[GoReportCard Widget]: https://goreportcard.com/badge/github.com/foolin/pagser
