@@ -167,31 +167,31 @@ func (p *Pagser) callFuncFieldValue(objRefValue reflect.Value, selTag *Tager, no
 				return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
 			}
 			return outValue, nil
-		} else {
-			refValueElem := objRefValue.Elem()
-			callMethod := refValueElem.MethodByName(selTag.FuncName)
-			if !callMethod.IsValid() {
-				callMethod = objRefValue.MethodByName(selTag.FuncName)
-			}
-			if !callMethod.IsValid() {
-				return nil, fmt.Errorf("not found method %v", selTag.FuncName)
-			}
-			callParams := make([]reflect.Value, 0)
-			callParams = append(callParams, reflect.ValueOf(node))
+		}
 
-			callReturns := callMethod.Call(callParams)
-			if len(callReturns) <= 0 {
-				return nil, fmt.Errorf("method %v not return any value", selTag.FuncName)
-			}
-			if len(callReturns) > 1 {
-				if err, ok := callReturns[len(callReturns)-1].Interface().(error); ok {
-					if err != nil {
-						return nil, fmt.Errorf("method %v return error: %v", selTag.FuncName, err)
-					}
+		refValueElem := objRefValue.Elem()
+		callMethod := refValueElem.MethodByName(selTag.FuncName)
+		if !callMethod.IsValid() {
+			callMethod = objRefValue.MethodByName(selTag.FuncName)
+		}
+		if !callMethod.IsValid() {
+			return nil, fmt.Errorf("not found method %v", selTag.FuncName)
+		}
+		callParams := make([]reflect.Value, 0)
+		callParams = append(callParams, reflect.ValueOf(node))
+
+		callReturns := callMethod.Call(callParams)
+		if len(callReturns) <= 0 {
+			return nil, fmt.Errorf("method %v not return any value", selTag.FuncName)
+		}
+		if len(callReturns) > 1 {
+			if err, ok := callReturns[len(callReturns)-1].Interface().(error); ok {
+				if err != nil {
+					return nil, fmt.Errorf("method %v return error: %v", selTag.FuncName, err)
 				}
 			}
-			return callReturns[0].Interface(), nil
 		}
+		return callReturns[0].Interface(), nil
 	}
 	return strings.TrimSpace(node.Text()), nil
 }

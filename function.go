@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// CallFunc write function interface
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 var sysFuncs = map[string]CallFunc{

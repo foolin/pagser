@@ -31,7 +31,7 @@ func MustNewWithConfig(cfg Config) *Pagser {
 	return pagser
 }
 
-// MustNewWithConfig create client with config and error
+// NewWithConfig create client with config and error
 func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.TagerName == "" {
 		return nil, errors.New("TagerName must not empty")
