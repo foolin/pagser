@@ -19,7 +19,7 @@
 ## Install
 
 ```bash
-go get github.com/foolin/pagser
+go get -u github.com/foolin/pagser
 ```
 
 ## Docs
