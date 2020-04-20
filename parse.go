@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/spf13/cast"
+	"io"
 	"reflect"
 	"strings"
 )
@@ -15,6 +16,15 @@ func (p *Pagser) Parse(v interface{}, document string) (err error) {
 		return err
 	}
 	return p.ParseDocument(v, reader)
+}
+
+// Parse parse html to struct
+func (p *Pagser) ParseReader(v interface{}, reader io.Reader) (err error) {
+	doc, err := goquery.NewDocumentFromReader(reader)
+	if err != nil {
+		return err
+	}
+	return p.ParseDocument(v, doc)
 }
 
 // ParseDocument parse document to struct

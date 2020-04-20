@@ -3,6 +3,7 @@ package pagser
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"net/http"
 	"strings"
 	"testing"
 )
@@ -70,6 +71,22 @@ func TestParse(t *testing.T) {
 
 	var data HtmlPage
 	err := p.Parse(&data, rawPpageHtml)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("json: %v\n", prettyJson(data))
+}
+
+func TestPagser_ParseReader(t *testing.T) {
+	res, err := http.Get("https://raw.githubusercontent.com/foolin/pagser/master/_examples/pages/demo.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+
+	p := New()
+	var data HtmlPage
+	err = p.ParseReader(&data, res.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
