@@ -1,6 +1,6 @@
 # Pagser
 
-[![GoDoc Widget]][GoDoc] [![Travis Widget]][Travis] [![GoReportCard Widget]][GoReportCard]
+[![go-doc-img]][go-doc] [![travis-img]][travis] [![go-report-card-img]][go-report-card] [![Coverage Status][cov-img]][cov]
 
 **Pagser** inspired by  <u>**pag**</u>e par<u>**ser**</u>。
 
@@ -317,9 +317,11 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 
 
 
-[GoDoc]: https://godoc.org/github.com/foolin/pagser
-[GoDoc Widget]: https://godoc.org/github.com/foolin/pagser?status.svg
-[Travis]: https://travis-ci.org/foolin/pagser
-[Travis Widget]: https://travis-ci.org/foolin/pagser.svg?branch=master
-[GoReportCard]: https://goreportcard.com/report/github.com/foolin/pagser
-[GoReportCard Widget]: https://goreportcard.com/badge/github.com/foolin/pagser
+[go-doc]: https://pkg.go.dev/github.com/foolin/pagser
+[go-doc-img]: https://godoc.org/github.com/foolin/pagser?status.svg
+[travis]: https://travis-ci.org/foolin/pagser
+[travis-img]: https://travis-ci.org/foolin/pagser.svg?branch=master
+[go-report-card]: https://goreportcard.com/report/github.com/foolin/pagser
+[go-report-card-img]: https://goreportcard.com/badge/github.com/foolin/pagser
+[cov-img]: https://codecov.io/gh/foolin/pagser/branch/master/graph/badge.svg
+[cov]: https://codecov.io/gh/foolin/pagser
