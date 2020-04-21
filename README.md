@@ -35,8 +35,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/foolin/pagser"
+	"log"
 )
 
 const rawPageHtml = `
@@ -79,23 +79,22 @@ func main() {
 
 	//data parser model
 	var data PageData
-
 	//parse html data
 	err := p.Parse(&data, rawPageHtml)
-
 	//check error
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	//print data
-	fmt.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(data))
+	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(data))
 }
 
 func toJson(v interface{}) string {
 	data, _ := json.MarshalIndent(v, "", "\t")
 	return string(data)
 }
+
 
 ```
 
