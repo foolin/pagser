@@ -23,15 +23,6 @@ func New() *Pagser {
 	return p
 }
 
-// MustNewWithConfig create client with config
-func MustNewWithConfig(cfg Config) *Pagser {
-	pagser, err := NewWithConfig(cfg)
-	if err != nil {
-		panic(err)
-	}
-	return pagser
-}
-
 // NewWithConfig create client with config and error
 func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.TagerName == "" {
