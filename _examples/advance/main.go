@@ -49,7 +49,7 @@ type PageData struct {
 }
 
 // this method will auto call, not need register.
-func (d PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "Struct-" + node.Text(), nil
 }
 

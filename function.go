@@ -60,7 +60,7 @@ import (
 //	     Text string `pagser:"h1->MyFunc()"`
 //	}
 //
-//	func (d PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+//	func (pd PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
 //		//Todo
 //		return "Hello", nil
 //	}
