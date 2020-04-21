@@ -73,6 +73,22 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 			node = selection.Find(tager.Selector)
 		}
 
+		var callOutValue interface{}
+		var callErr error
+		if tager.FuncName != "" {
+			callOutValue, callErr = p.callFuncFieldValue(objRefValue, tager, node)
+			if callErr != nil {
+				return fmt.Errorf("tag=`%v` parse func error: %v", tagValue, callErr)
+			}
+			svErr := setRefectValue(fieldType.Type.Kind(), fieldValue, callOutValue)
+			if svErr != nil {
+				return fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
+			}
+
+			//goto parse next field
+			continue
+		}
+
 		//set value
 		kind := fieldType.Type.Kind()
 		switch {
@@ -146,20 +162,7 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 			//Chan
 			//Func
 		default:
-			if tager.FuncName != "" {
-				callOutValue, callErr := p.callFuncFieldValue(objRefValue, tager, node)
-				if callErr != nil {
-					return fmt.Errorf("tag=`%v` parse func error: %v", tagValue, callErr)
-				}
-				//fmt.Printf("call func %v value: %#v\n", tager.FuncName, callOutValue)
-				//fieldValue.Set(reflect.ValueOf(callOutValue))
-				svErr := setRefectValue(fieldType.Type.Kind(), fieldValue, callOutValue)
-				if svErr != nil {
-					return fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
-				}
-			} else {
-				fieldValue.SetString(strings.TrimSpace(node.Text()))
-			}
+			fieldValue.SetString(strings.TrimSpace(node.Text()))
 		}
 	}
 	return nil
@@ -237,16 +240,17 @@ func setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v interface{}) 
 		}
 		fieldValue.SetFloat(value)
 		//Interface
-	case kind == reflect.Interface:
-		fieldValue.Set(reflect.ValueOf(v))
 	case kind == reflect.String:
 		kv, err := cast.ToStringE(v)
 		if err != nil {
 			return err
 		}
 		fieldValue.SetString(kv)
+	//case kind == reflect.Interface:
+	//	fieldValue.Set(reflect.ValueOf(v))
 	default:
-		return fmt.Errorf("not support type %v", kind)
+		fieldValue.Set(reflect.ValueOf(v))
+		//return fmt.Errorf("not support type %v", kind)
 	}
 	return nil
 }

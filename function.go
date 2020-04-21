@@ -17,6 +17,8 @@ var sysFuncs = map[string]CallFunc{
 	"attrInt":   attrInt,
 	"outerHtml": outHtml,
 	"value":     value,
+	"split":     split,
+	"attrSplit": attrSplit,
 }
 
 func html(node *goquery.Selection, args ...string) (out interface{}, err error) {
@@ -47,6 +49,18 @@ func attr(node *goquery.Selection, args ...string) (out interface{}, err error) 
 	return val, nil
 }
 
+func attrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) <= 0 {
+		return "", fmt.Errorf("attr(xxx) must has name")
+	}
+	name := args[0]
+	sep := ","
+	if len(args) > 1 {
+		sep = args[1]
+	}
+	return strings.Split(node.AttrOr(name, ""), sep), nil
+}
+
 func attrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
@@ -59,6 +73,15 @@ func attrInt(node *goquery.Selection, args ...string) (out interface{}, err erro
 		return strconv.Atoi(defaultValue)
 	}
 	return outVal, nil
+}
+
+// split split
+func split(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	sep := ","
+	if len(args) > 0 {
+		sep = args[0]
+	}
+	return strings.Split(node.Text(), sep), nil
 }
 
 // RegisterFunc register function for parse

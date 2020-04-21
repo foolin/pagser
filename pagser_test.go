@@ -15,28 +15,35 @@ import (
 //	"outerHtml": outHtml,
 //	"value":     value,
 type HtmlPage struct {
-	Title  string `pagser:"title"`
-	H1     string `pagser:"h1->text()"`
-	H1HTML string `pagser:"h1->outerHtml()"`
-	Navs   []struct {
+	Title    string   `pagser:"title"`
+	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
+	H1       string   `pagser:"h1->text()"`
+	H1HTML   string   `pagser:"h1->outerHtml()"`
+	Navs     []struct {
 		ID   int    `pagser:"a->attrInt(id, -1)"`
 		Name string `pagser:"a->attr(href)"`
 		Url  string `pagser:"a"`
 	} `pagser:".navlink li"`
 	NavNames   []string `pagser:".navlink li"`
-	NavMods    []string `pagser:".navlink li->GetMod()"`
+	NavMods    []string `pagser:".navlink li->GetMods()"`
 	FirstLink  string   `pagser:".navlink li:first-child->html()"`
 	InputValue string   `pagser:"input[name='feedback']->value()"`
 }
 
 // this method will auto call, not need register.
-func (h HtmlPage) GetMod(node *goquery.Selection, args ...string) (out interface{}, err error) {
+func (h HtmlPage) GetMods(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	//<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
-	href := node.Find("a").AttrOr("href", "")
-	if idx := strings.LastIndex(href, "/"); idx != -1 {
-		return href[idx+1:], nil
-	}
-	return "", nil
+	list := make([]string, 0)
+	node.Each(func(i int, selNode *goquery.Selection) {
+		var val = ""
+		href := selNode.Find("a").AttrOr("href", "")
+		if idx := strings.LastIndex(href, "/"); idx != -1 {
+			val = href[idx+1:]
+		}
+		list = append(list, val)
+	})
+	//fmt.Printf("GetMods: %v\n", list)
+	return list, nil
 }
 
 const rawPpageHtml = `
@@ -45,6 +52,7 @@ const rawPpageHtml = `
 <head>
     <meta charset="utf-8">
     <title>Pagser Example</title>
+	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
 </head>
 
 <body>
