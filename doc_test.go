@@ -76,7 +76,7 @@ func ExamplePagser_ParseReader() {
 	log.Printf("%v", page)
 }
 
-func ExampleMustNewWithConfig() {
+func ExampleNewWithConfig() {
 	cfg := Config{
 		TagerName:    "pagser",
 		FuncSymbol:   "->",
