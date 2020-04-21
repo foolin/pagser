@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type ExampPage struct {
+type PageData struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
@@ -26,17 +26,18 @@ func main() {
 
 	//New default config
 	p := pagser.New()
+
 	//data parser model
-	var page ExampPage
+	var data PageData
 	//parse html data
-	err = p.ParseReader(&page, resp.Body)
+	err = p.ParseReader(&data, resp.Body)
 	//check error
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	//print data
-	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(page))
+	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(data))
 }
 
 func toJson(v interface{}) string {

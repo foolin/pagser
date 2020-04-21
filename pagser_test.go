@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
-	"strings"
 	"testing"
 )
 
@@ -15,37 +14,36 @@ import (
 //	"outerHtml": outHtml,
 //	"value":     value,
 type HtmlPage struct {
-	Title    string   `pagser:"title"`
-	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
-	H1       string   `pagser:"h1->text()"`
-	H1HTML   string   `pagser:"h1->outerHtml()"`
-	NavList  []struct {
+	Title             string   `pagser:"title"`
+	Keywords          []string `pagser:"meta[name='keywords']->attrSplit(content)"`
+	H1                string   `pagser:"h1->text()"`
+	H1Html            string   `pagser:"h1->html()"`
+	H1OutHtml         string   `pagser:"h1->outerHtml()"`
+	MyGlobalFuncValue string   `pagser:"h1->MyGlobFunc()"`
+	MyStructFuncValue string   `pagser:"h1->MyStructFunc()"`
+	NavList           []struct {
 		ID   int    `pagser:"a->attrInt(id, -1)"`
-		Name string `pagser:"a->attr(href)"`
-		Url  string `pagser:"a"`
+		Name string `pagser:"a"`
+		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
-	NavNameList  []string `pagser:".navlink li"`
-	NavNameJoins string   `pagser:".navlink li->join(|)"`
-	NavMods      []string `pagser:".navlink li->GetMods()"`
-	FirstLink    string   `pagser:".navlink li:first-child->html()"`
-	Words        []string `pagser:".words->split(|)"`
-	InputValue   string   `pagser:"input[name='feedback']->value()"`
+	NavTextList     []string `pagser:".navlink li"`
+	NavEachText     []string `pagser:".navlink li->eachText()"`
+	NavEachAttrID   []string `pagser:".navlink li->eachAttr(id)"`
+	NavEachHtml     []string `pagser:".navlink li->eachHtml()"`
+	NavEachOutHtml  []string `pagser:".navlink li->eachOutHtml()"`
+	NavJoinString   string   `pagser:".navlink li->eachJoin(|)"`
+	WordsSplitArray []string `pagser:".words->split(|)"`
+	Value           string   `pagser:"input[name='feedback']->value()"`
 }
 
 // this method will auto call, not need register.
-func (h HtmlPage) GetMods(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
-	list := make([]string, 0)
-	node.Each(func(i int, selNode *goquery.Selection) {
-		var val = ""
-		href := selNode.Find("a").AttrOr("href", "")
-		if idx := strings.LastIndex(href, "/"); idx != -1 {
-			val = href[idx+1:]
-		}
-		list = append(list, val)
-	})
-	//fmt.Printf("GetMods: %v\n", list)
-	return list, nil
+func MyGlobalFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Global-" + node.Text(), nil
+}
+
+// this method will auto call, not need register.
+func (h HtmlPage) MyStructFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Struct-" + node.Text(), nil
 }
 
 const rawPpageHtml = `
@@ -58,7 +56,7 @@ const rawPpageHtml = `
 </head>
 
 <body>
-	<h1>Pagser H1 Title</h1>
+	<h1><u>Pagser</u> H1 Title</h1>
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
@@ -70,7 +68,7 @@ const rawPpageHtml = `
 		</div>
 	</div>
 	<div class='words'>A|B|C|D</div>
-	<input name="feedback" value="hello@example.com" /> 
+	<input name="feedback" value="pagser@foolin.github" /> 
 </body>
 </html>
 `
@@ -78,10 +76,16 @@ const rawPpageHtml = `
 func TestParse(t *testing.T) {
 	cfg := DefaultConfig()
 	cfg.Debug = true
-	p := MustNewWithConfig(cfg)
+	p, err := NewWithConfig(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	//register global function
+	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
 
 	var data HtmlPage
-	err := p.Parse(&data, rawPpageHtml)
+	err = p.Parse(&data, rawPpageHtml)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -96,6 +100,10 @@ func TestPagser_ParseReader(t *testing.T) {
 	defer res.Body.Close()
 
 	p := New()
+
+	//register global function
+	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
+
 	var data HtmlPage
 	err = p.ParseReader(&data, res.Body)
 	if err != nil {

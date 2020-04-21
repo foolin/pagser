@@ -2,13 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/foolin/pagser"
 	"github.com/foolin/pagser/extensions/markdown"
-	"strconv"
-	"strings"
+	"log"
 )
 
 const rawPageHtml = `
@@ -16,11 +13,11 @@ const rawPageHtml = `
 <html>
 <head>
     <meta charset="utf-8">
-    <title>PagserTitle</title>
+    <title>Pagser Title</title>
 </head>
 
 <body>
-	<h1>Test H1 Example</h1>
+	<h1>H1 Pagser Example</h1>
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
@@ -35,26 +32,7 @@ const rawPageHtml = `
 </html>
 `
 
-func main() {
-	//New with config
-	cfg := pagser.DefaultConfig()
-	cfg.Debug = true
-	p := pagser.MustNewWithConfig(cfg)
-
-	//Register Markdown
-	markdown.Register(p)
-	//Register AttrInt
-	p.RegisterFunc("AttrInt", AttrInt)
-
-	var page ExampPage
-	err := p.Parse(&page, rawPageHtml)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(page))
-}
-
-type ExampPage struct {
+type PageData struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
@@ -62,35 +40,50 @@ type ExampPage struct {
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
-	NavID    []int    `pagser:".navlink li->AttrInt(id, '-1')"`
-	NavTexts []string `pagser:".navlink li"`
-	NavMods  []string `pagser:".navlink li->GetMod()"`
-	Markdown string   `pagser:"->Markdown()"`
+	NavIds        []string `pagser:".navlink li->eachAttr(id, -1)"`
+	NavTexts      []string `pagser:".navlink li"`
+	NavEachTexts  []string `pagser:".navlink li->eachText()"`
+	MyFuncValue   string   `pagser:"h1->MyFunc()"`
+	MyGlobalValue string   `pagser:"h1->MyGlob()"`
+	Markdown      string   `pagser:"->Markdown()"`
 }
 
 // this method will auto call, not need register.
-func (h ExampPage) GetMod(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
-	href := node.Find("a").AttrOr("href", "")
-	fmt.Printf("href: %v\n", href)
-	if idx := strings.LastIndex(href, "/"); idx != -1 {
-		return href[idx+1:], nil
-	}
-	return "", nil
+func (d PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Struct-" + node.Text(), nil
 }
 
-// this global method must call pagser.RegisterFunc("AttrInt", AttrInt).
-func AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//<li id='2'>
-	//`pagser:".navlink li->AttrInt(id, '-1')"`
-	if len(args) < 2 {
-		return -1, errors.New("AttrInt must has two args, such as AttrInt(id, 0)")
+// this global method must call pagser.RegisterFunc("MyGlobFunc", MyGlobalFunc).
+func MyGlobalFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Global-" + node.Text(), nil
+}
+
+func main() {
+	//New with config
+	cfg := pagser.Config{
+		TagerName:    "pagser",
+		FuncSymbol:   "->",
+		IgnoreSymbol: "-",
+		Debug:        true,
 	}
-	value := node.AttrOr(args[0], "")
-	if value == "" {
-		return -1, nil
+	p, err := pagser.NewWithConfig(cfg)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return strconv.Atoi(value)
+
+	//Register Markdown
+	markdown.Register(p)
+
+	//Register global function
+	p.RegisterFunc("MyGlob", MyGlobalFunc)
+
+	var data PageData
+	err = p.Parse(&data, rawPageHtml)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(data))
 }
 
 func toJson(v interface{}) string {

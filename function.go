@@ -11,23 +11,31 @@ import (
 //
 // Builtin Functions
 //
-// - html() get inner html.
+// - text() get element  text, return string, this is default function, if not define function in struct tag.
 //
-// - outerHtml() get outer html.
+// - eachText() get each element text, return []string.
 //
-// - text() get inner text.
+// - html() get element inner html, return string.
 //
-// - attr(name) get element attribute value.
+// - eachHtml() get each element inner html, return []string.
 //
-// - attrInt(name, defaultValue) get element attribute value and to int.
+// - outerHtml() get element  outer html, return string.
 //
-// - value() get element attribute value by name is `value`, eg: <input value='xxxx' />.
+// - eachOutHtml() get each element outer html, return []string.
 //
-// - split(sep) get text and split by separator to array string.
+// - attr(name) get element attribute value, return string.
+//
+// - eachAttr() get each element attribute value, return []string.
+//
+// - attrInt(name, defaultValue) get element attribute value and to int, return int.
 //
 // - attrSplit(name, sep)  get attribute value and split by separator to array string.
 //
-// - join() get match selector element text and join to string.
+// - value() get element attribute value by name is `value`, return string, eg: <input value='xxxx' /> will return "xxx".
+//
+// - split(sep) get element text and split by separator to array string, return []string.
+//
+// - eachJoin(sep) get each element text and join to string, return string.
 //
 //
 // # Define Global Function
@@ -47,40 +55,75 @@ import (
 //
 //
 // # Define Struct Function
-//
-//	func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
-//		//Todo
-//		return "Hello", nil
-//	}
-//
-//	//Register function
-//	pagser.RegisterFunc("MyFunc", MyFunc)
-//
 //	//Use function
 //	type MyStruct struct{
 //	     Text string `pagser:"h1->MyFunc()"`
 //	}
 //
+//	func (my MyStruct) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+//		//Todo
+//		return "Hello", nil
+//	}
 //
-// Define your own function
+//
+//
+// Define your own function interface
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 var sysFuncs = map[string]CallFunc{
-	"html":      html,
-	"outerHtml": outHtml,
-	"text":      text,
-	"attr":      attr,
-	"attrInt":   attrInt,
-	"value":     value,
-	"split":     split,
-	"attrSplit": attrSplit,
-	"join":      join,
+	"text":        text,
+	"eachText":    eachText,
+	"html":        html,
+	"eachHtml":    eachHtml,
+	"outerHtml":   outHtml,
+	"eachOutHtml": eachOutHtml, //
+	"attr":        attr,        //
+	"eachAttr":    eachAttr,
+	"attrInt":     attrInt,
+	"attrSplit":   attrSplit,
+	"value":       value,
+	"split":       split,
+	"eachJoin":    eachJoin,
 }
 
+// text() string
+func text(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return strings.TrimSpace(node.Text()), nil
+}
+
+// eachText() []string
+func eachText(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	list := make([]string, 0)
+	node.Each(func(i int, selection *goquery.Selection) {
+		list = append(list, strings.TrimSpace(selection.Text()))
+	})
+	return list, nil
+}
+
+// html() string
 func html(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return node.Html()
 }
 
+// eachHtml() []string
+func eachHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	list := make([]string, 0)
+	node.EachWithBreak(func(i int, selection *goquery.Selection) bool {
+		var html string
+		html, err = node.Html()
+		if err != nil {
+			return false
+		}
+		list = append(list, html)
+		return true
+	})
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+// outHtml() string
 func outHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	html, err := goquery.OuterHtml(node)
 	if err != nil {
@@ -89,34 +132,48 @@ func outHtml(node *goquery.Selection, args ...string) (out interface{}, err erro
 	return html, nil
 }
 
-func value(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	return node.AttrOr("value", ""), nil
+// eachOutHtml() []string
+func eachOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	list := make([]string, 0)
+	node.EachWithBreak(func(i int, selection *goquery.Selection) bool {
+		var html string
+		html, err = goquery.OuterHtml(node)
+		if err != nil {
+			return false
+		}
+		list = append(list, html)
+		return true
+	})
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
-func text(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	return strings.TrimSpace(node.Text()), nil
-}
-
+// attr(name) string
 func attr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("attr(xxx) must has name")
 	}
-	val, _ := node.Attr(args[0])
+	name := args[0]
+	val, _ := node.Attr(name)
 	return val, nil
 }
 
-func attrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachAttr(name) []string
+func eachAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("attr(xxx) must has name")
 	}
 	name := args[0]
-	sep := ","
-	if len(args) > 1 {
-		sep = args[1]
-	}
-	return strings.Split(node.AttrOr(name, ""), sep), nil
+	list := make([]string, 0)
+	node.Each(func(i int, selection *goquery.Selection) {
+		list = append(list, strings.TrimSpace(selection.AttrOr(name, "")))
+	})
+	return list, nil
 }
 
+// attrInt(name) int
 func attrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
@@ -131,6 +188,25 @@ func attrInt(node *goquery.Selection, args ...string) (out interface{}, err erro
 	return outVal, nil
 }
 
+// attrSplit(name, sep) []string
+func attrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) <= 0 {
+		return "", fmt.Errorf("attr(xxx) must has name")
+	}
+	name := args[0]
+	sep := ","
+	if len(args) > 1 {
+		sep = args[1]
+	}
+	return strings.Split(node.AttrOr(name, ""), sep), nil
+}
+
+// value() string
+func value(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return node.AttrOr("value", ""), nil
+}
+
+// split(sep) []string
 func split(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
@@ -139,7 +215,8 @@ func split(node *goquery.Selection, args ...string) (out interface{}, err error)
 	return strings.Split(node.Text(), sep), nil
 }
 
-func join(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachJoin(sep) string
+func eachJoin(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
 		sep = args[0]

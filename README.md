@@ -174,26 +174,31 @@ type ExamData struct {
 
 #### Builtin functions
 
->- html() get inner html.
+> - text() get element  text, return string, this is default function, if not define function in struct tag.
 
->- outerHtml() get outer html.
+> - eachText() get each element text, return []string.
 
->- text() get inner text.
+> - html() get element inner html, return string.
 
->- attr(name) get element attribute value.
+> - eachHtml() get each element inner html, return []string.
 
->- attrInt(name, defaultValue) get element attribute value and to int.
+> - outerHtml() get element  outer html, return string.
 
->- value() get element attribute value by name is `value`, eg: <input value='xxxx' />.
+> - eachOutHtml() get each element outer html, return []string.
 
->- split(sep) get text and split by separator to array string.
+> - attr(name) get element attribute value, return string.
 
->- attrSplit(name, sep)  get attribute value and split by separator to array string.
+> - eachAttr() get each element attribute value, return []string.
 
->- join() get match selector element text and join to string.
+> - attrInt(name, defaultValue) get element attribute value and to int, return int.
 
+> - attrSplit(name, sep)  get attribute value and split by separator to array string.
 
+> - value() get element attribute value by name is `value`, return string, eg: <input value='xxxx' /> will return "xxx".
 
+> - split(sep) get element text and split by separator to array string, return []string.
+
+> - eachJoin(sep) get each element text and join to string, return string.
 
 
 #### Extensions functions
@@ -225,38 +230,29 @@ type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, er
 **1. Write global function:**
 ```go
 
-//global function need call pagser.RegisterFunc("myAttrInt", myAttrInt) before use it.
-func myAttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) < 2 {
-		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
-	}
-	name := args[0]
-	defaultValue := args[1]
-	attrVal := node.AttrOr(name, defaultValue)
-	outVal, err := strconv.Atoi(attrVal)
-	if err != nil {
-		return strconv.Atoi(defaultValue)
-	}
-	return outVal, nil
+//global function need call pagser.RegisterFunc("MyGlob", MyGlobalFunc) before use it.
+// this global method must call pagser.RegisterFunc("MyGlob", MyGlobalFunc).
+func MyGlobalFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Global-" + node.Text(), nil
 }
 
-type MyStruct struct{
-  Attr int    `pagser:"->myAttrInt(id, -1)"`
+type PageData struct{
+  MyGlobalValue string    `pagser:"->MyGlob()"`
 }
 
 func main(){
 
 	p := pagser.New()
 
-	//Register AttrInt
-	p.RegisterFunc("myAttrInt", myAttrInt)
+	//Register global function `MyGlob`
+	p.RegisterFunc("MyGlob", MyGlobalFunc)
 
     //Todo
 
 	//data parser model
-	var page MyStruct
+	var data PageData
 	//parse html data
-	err := p.Parse(&page, rawPageHtml)
+	err := p.Parse(&data, rawPageHtml)
 
     //...
 }
@@ -267,24 +263,13 @@ func main(){
 **2. Write struct function:**
 ```go
 
-type MyStruct struct{
-  Attr int    `pagser:"->myAttrInt(id, -1)"`
+type PageData struct{
+  MyFuncValue int    `pagser:"->MyFunc()"`
 }
 
-//Struct function not need register.
-func (s MyStruct) myAttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) < 2 {
-		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
-	}
-	name := args[0]
-	defaultValue := args[1]
-	attrVal := node.AttrOr(name, defaultValue)
-	outVal, err := strconv.At
-oi(attrVal)
-	if err != nil {
-		return strconv.Atoi(defaultValue)
-	}
-	return outVal, nil
+// this method will auto call, not need register.
+func (d PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Struct-" + node.Text(), nil
 }
 
 
@@ -295,14 +280,16 @@ func main(){
     //Todo
 
 	//data parser model
-	var page MyStruct
+	var data PageData
 	//parse html data
-	err := p.Parse(&page, rawPageHtml)
+	err := p.Parse(&data, rawPageHtml)
 
     //...
 }
 
 ```
+
+See advance example: <https://github.com/foolin/pagser/tree/master/_examples/advance>
 
 # Colly Example
 
@@ -323,7 +310,7 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 
 ```
 
-# Example
+# Examples
 
 [See Examples](https://github.com/foolin/pagser/tree/master/_examples)
 

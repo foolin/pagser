@@ -30,7 +30,7 @@ const rawPageHtml = `
 </html>
 `
 
-type ExampPage struct {
+type PageData struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
@@ -43,17 +43,18 @@ type ExampPage struct {
 func main() {
 	//New default config
 	p := pagser.New()
+
 	//data parser model
-	var page ExampPage
+	var data PageData
 	//parse html data
-	err := p.Parse(&page, rawPageHtml)
+	err := p.Parse(&data, rawPageHtml)
 	//check error
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	//print data
-	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(page))
+	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(data))
 }
 
 func toJson(v interface{}) string {
