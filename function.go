@@ -49,18 +49,18 @@ import (
 //	pagser.RegisterFunc("MyFunc", MyFunc)
 //
 //	//Use function
-//	type MyStruct struct{
+//	type PageData struct{
 //	     Text string `pagser:"h1->MyFunc()"`
 //	}
 //
 //
 // # Define Struct Function
 //	//Use function
-//	type MyStruct struct{
+//	type PageData struct{
 //	     Text string `pagser:"h1->MyFunc()"`
 //	}
 //
-//	func (my MyStruct) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+//	func (my PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
 //		//Todo
 //		return "Hello", nil
 //	}
