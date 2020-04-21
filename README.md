@@ -173,16 +173,34 @@ type ExamData struct {
 # Functions
 
 #### Builtin functions
-- html()
-- text()
-- attr(name)
-- attrInt(name, defaultValue) //covert attr value to int
-- outerHtml()
-- value(name) //alias for `goquery.AttrOr("value", "")`
+
+>- html() get inner html.
+
+>- outerHtml() get outer html.
+
+>- text() get inner text.
+
+>- attr(name) get element attribute value.
+
+>- attrInt(name, defaultValue) get element attribute value and to int.
+
+>- value() get element attribute value by name is `value`, eg: <input value='xxxx' />.
+
+>- split(sep) get text and split by separator to array string.
+
+>- attrSplit(name, sep)  get attribute value and split by separator to array string.
+
+>- join() get match selector element text and join to string.
+
+
+
+
 
 #### Extensions functions
-- Markdown() //convert html to markdown format.
-- UgcHtml() //sanitize html
+
+>- Markdown() //convert html to markdown format.
+
+>- UgcHtml() //sanitize html
 
 Extensions function need register, like:
 ```go

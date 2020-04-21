@@ -19,15 +19,17 @@ type HtmlPage struct {
 	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
 	H1       string   `pagser:"h1->text()"`
 	H1HTML   string   `pagser:"h1->outerHtml()"`
-	Navs     []struct {
+	NavList  []struct {
 		ID   int    `pagser:"a->attrInt(id, -1)"`
 		Name string `pagser:"a->attr(href)"`
 		Url  string `pagser:"a"`
 	} `pagser:".navlink li"`
-	NavNames   []string `pagser:".navlink li"`
-	NavMods    []string `pagser:".navlink li->GetMods()"`
-	FirstLink  string   `pagser:".navlink li:first-child->html()"`
-	InputValue string   `pagser:"input[name='feedback']->value()"`
+	NavNameList  []string `pagser:".navlink li"`
+	NavNameJoins string   `pagser:".navlink li->join(|)"`
+	NavMods      []string `pagser:".navlink li->GetMods()"`
+	FirstLink    string   `pagser:".navlink li:first-child->html()"`
+	Words        []string `pagser:".words->split(|)"`
+	InputValue   string   `pagser:"input[name='feedback']->value()"`
 }
 
 // this method will auto call, not need register.
@@ -67,6 +69,7 @@ const rawPpageHtml = `
 			</ul>
 		</div>
 	</div>
+	<div class='words'>A|B|C|D</div>
 	<input name="feedback" value="hello@example.com" /> 
 </body>
 </html>

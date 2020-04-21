@@ -8,17 +8,73 @@ import (
 )
 
 // CallFunc write function interface
+//
+// Builtin Functions
+//
+// - html() get inner html.
+//
+// - outerHtml() get outer html.
+//
+// - text() get inner text.
+//
+// - attr(name) get element attribute value.
+//
+// - attrInt(name, defaultValue) get element attribute value and to int.
+//
+// - value() get element attribute value by name is `value`, eg: <input value='xxxx' />.
+//
+// - split(sep) get text and split by separator to array string.
+//
+// - attrSplit(name, sep)  get attribute value and split by separator to array string.
+//
+// - join() get match selector element text and join to string.
+//
+//
+// # Define Global Function
+//
+//	func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+//		//Todo
+//		return "Hello", nil
+//	}
+//
+//	//Register function
+//	pagser.RegisterFunc("MyFunc", MyFunc)
+//
+//	//Use function
+//	type MyStruct struct{
+//	     Text string `pagser:"h1->MyFunc()"`
+//	}
+//
+//
+// # Define Struct Function
+//
+//	func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
+//		//Todo
+//		return "Hello", nil
+//	}
+//
+//	//Register function
+//	pagser.RegisterFunc("MyFunc", MyFunc)
+//
+//	//Use function
+//	type MyStruct struct{
+//	     Text string `pagser:"h1->MyFunc()"`
+//	}
+//
+//
+// Define your own function
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 var sysFuncs = map[string]CallFunc{
 	"html":      html,
+	"outerHtml": outHtml,
 	"text":      text,
 	"attr":      attr,
 	"attrInt":   attrInt,
-	"outerHtml": outHtml,
 	"value":     value,
 	"split":     split,
 	"attrSplit": attrSplit,
+	"join":      join,
 }
 
 func html(node *goquery.Selection, args ...string) (out interface{}, err error) {
@@ -75,13 +131,24 @@ func attrInt(node *goquery.Selection, args ...string) (out interface{}, err erro
 	return outVal, nil
 }
 
-// split split
 func split(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
 		sep = args[0]
 	}
 	return strings.Split(node.Text(), sep), nil
+}
+
+func join(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	sep := ","
+	if len(args) > 0 {
+		sep = args[0]
+	}
+	list := make([]string, 0)
+	node.Each(func(i int, selection *goquery.Selection) {
+		list = append(list, strings.TrimSpace(selection.Text()))
+	})
+	return strings.Join(list, sep), nil
 }
 
 // RegisterFunc register function for parse
