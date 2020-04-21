@@ -16,4 +16,6 @@
 // * Configurable - Support configuration.
 //
 // * GoQuery/Colly - Support all goquery project, such as go-colly.
+//
+// More info: https://github.com/foolin/pagser
 package pagser
