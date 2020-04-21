@@ -242,17 +242,17 @@ type PageData struct{
 
 func main(){
 
-	p := pagser.New()
+    p := pagser.New()
 
-	//Register global function `MyGlob`
-	p.RegisterFunc("MyGlob", MyGlobalFunc)
+    //Register global function `MyGlob`
+    p.RegisterFunc("MyGlob", MyGlobalFunc)
 
     //Todo
 
-	//data parser model
-	var data PageData
-	//parse html data
-	err := p.Parse(&data, rawPageHtml)
+    //data parser model
+    var data PageData
+    //parse html data
+    err := p.Parse(&data, rawPageHtml)
 
     //...
 }
@@ -275,14 +275,14 @@ func (d PageData) MyFunc(node *goquery.Selection, args ...string) (out interface
 
 func main(){
 
-	p := pagser.New()
+    p := pagser.New()
 
     //Todo
 
-	//data parser model
-	var data PageData
-	//parse html data
-	err := p.Parse(&data, rawPageHtml)
+    //data parser model
+    var data PageData
+    //parse html data
+    err := p.Parse(&data, rawPageHtml)
 
     //...
 }
