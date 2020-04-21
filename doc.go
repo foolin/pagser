@@ -1,5 +1,7 @@
 //Package pagser is a simple, easy, extensible, configurable HTML parser to struct based on goquery and struct tags,
-//It's parser library from scrago(https://github.com/foolin/scrago).
+//It's parser library from scrago.
+//
+// The project source code: https://github.com/foolin/pagser
 //
 // Features
 //
