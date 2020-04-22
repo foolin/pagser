@@ -8,36 +8,7 @@ import (
 )
 
 // CallFunc write function interface
-//
-// Builtin Functions
-//
-// - text() get element  text, return string, this is default function, if not define function in struct tag.
-//
-// - eachText() get each element text, return []string.
-//
-// - html() get element inner html, return string.
-//
-// - eachHtml() get each element inner html, return []string.
-//
-// - outerHtml() get element  outer html, return string.
-//
-// - eachOutHtml() get each element outer html, return []string.
-//
-// - attr(name) get element attribute value, return string.
-//
-// - eachAttr() get each element attribute value, return []string.
-//
-// - attrInt(name, defaultValue) get element attribute value and to int, return int.
-//
-// - attrSplit(name, sep)  get attribute value and split by separator to array string.
-//
-// - value() get element attribute value by name is `value`, return string, eg: <input value='xxxx' /> will return "xxx".
-//
-// - split(sep) get element text and split by separator to array string, return []string.
-//
-// - eachJoin(sep) get each element text and join to string, return string.
-//
-//
+
 // # Define Global Function
 //
 //	func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
@@ -70,29 +41,38 @@ import (
 // Define your own function interface
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
-var sysFuncs = map[string]CallFunc{
-	"text":        text,
-	"eachText":    eachText,
-	"html":        html,
-	"eachHtml":    eachHtml,
-	"outerHtml":   outHtml,
-	"eachOutHtml": eachOutHtml, //
-	"attr":        attr,        //
-	"eachAttr":    eachAttr,
-	"attrInt":     attrInt,
-	"attrSplit":   attrSplit,
-	"value":       value,
-	"split":       split,
-	"eachJoin":    eachJoin,
+//Builtin Functions
+type BuiltinFunctions struct {
 }
 
-// text() string
-func text(node *goquery.Selection, args ...string) (out interface{}, err error) {
+var builtinFuncObj BuiltinFunctions
+var builtinFuncMap = map[string]CallFunc{
+	"text":         builtinFuncObj.Text,
+	"eachText":     builtinFuncObj.EachText,
+	"html":         builtinFuncObj.Html,
+	"eachHtml":     builtinFuncObj.EachHtml,
+	"outerHtml":    builtinFuncObj.OutHtml,
+	"eachOutHtml":  builtinFuncObj.EachOutHtml, //
+	"attr":         builtinFuncObj.Attr,        //
+	"eachAttr":     builtinFuncObj.EachAttr,
+	"attrInt":      builtinFuncObj.AttrInt,
+	"attrSplit":    builtinFuncObj.AttrSplit,
+	"value":        builtinFuncObj.Value,
+	"split":        builtinFuncObj.Split,
+	"eachJoin":     builtinFuncObj.EachJoin,
+	"eq":           builtinFuncObj.Eq,
+	"eqAndAttr":    builtinFuncObj.EqAndAttr,
+	"eqAndHtml":    builtinFuncObj.EqAndHtml,
+	"eqAndOutHtml": builtinFuncObj.EqAndOutHtml,
+}
+
+// text() get element  text, return string, this is default function, if not define function in struct tag.
+func (builtin BuiltinFunctions) Text(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return strings.TrimSpace(node.Text()), nil
 }
 
-// eachText() []string
-func eachText(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachText() get each element text, return []string.
+func (builtin BuiltinFunctions) EachText(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.Each(func(i int, selection *goquery.Selection) {
 		list = append(list, strings.TrimSpace(selection.Text()))
@@ -100,13 +80,13 @@ func eachText(node *goquery.Selection, args ...string) (out interface{}, err err
 	return list, nil
 }
 
-// html() string
-func html(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// html() get element inner html, return string.
+func (builtin BuiltinFunctions) Html(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return node.Html()
 }
 
-// eachHtml() []string
-func eachHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachHtml() get each element inner html, return []string.
+func (builtin BuiltinFunctions) EachHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.EachWithBreak(func(i int, selection *goquery.Selection) bool {
 		var html string
@@ -123,8 +103,8 @@ func eachHtml(node *goquery.Selection, args ...string) (out interface{}, err err
 	return list, nil
 }
 
-// outHtml() string
-func outHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// outerHtml() get element  outer html, return string.
+func (builtin BuiltinFunctions) OutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	html, err := goquery.OuterHtml(node)
 	if err != nil {
 		return "", err
@@ -132,8 +112,8 @@ func outHtml(node *goquery.Selection, args ...string) (out interface{}, err erro
 	return html, nil
 }
 
-// eachOutHtml() []string
-func eachOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachOutHtml() get each element outer html, return []string.
+func (builtin BuiltinFunctions) EachOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.EachWithBreak(func(i int, selection *goquery.Selection) bool {
 		var html string
@@ -150,8 +130,8 @@ func eachOutHtml(node *goquery.Selection, args ...string) (out interface{}, err 
 	return list, nil
 }
 
-// attr(name) string
-func attr(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// attr(name) get element attribute value, return string.
+func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("attr(xxx) must has name")
 	}
@@ -160,8 +140,8 @@ func attr(node *goquery.Selection, args ...string) (out interface{}, err error) 
 	return val, nil
 }
 
-// eachAttr(name) []string
-func eachAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachAttr() get each element attribute value, return []string.
+func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("attr(xxx) must has name")
 	}
@@ -173,8 +153,8 @@ func eachAttr(node *goquery.Selection, args ...string) (out interface{}, err err
 	return list, nil
 }
 
-// attrInt(name) int
-func attrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// attrInt(name, defaultValue) get element attribute value and to int, return int.
+func (builtin BuiltinFunctions) AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
 	}
@@ -188,8 +168,8 @@ func attrInt(node *goquery.Selection, args ...string) (out interface{}, err erro
 	return outVal, nil
 }
 
-// attrSplit(name, sep) []string
-func attrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// attrSplit(name, sep)  get attribute value and split by separator to array string.
+func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("attr(xxx) must has name")
 	}
@@ -201,13 +181,13 @@ func attrSplit(node *goquery.Selection, args ...string) (out interface{}, err er
 	return strings.Split(node.AttrOr(name, ""), sep), nil
 }
 
-// value() string
-func value(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// value() get element attribute value by name is `value`, return string
+func (builtin BuiltinFunctions) Value(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return node.AttrOr("value", ""), nil
 }
 
-// split(sep) []string
-func split(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// split(sep) get element text and split by separator to array string, return []string.
+func (builtin BuiltinFunctions) Split(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
 		sep = args[0]
@@ -215,8 +195,8 @@ func split(node *goquery.Selection, args ...string) (out interface{}, err error)
 	return strings.Split(node.Text(), sep), nil
 }
 
-// eachJoin(sep) string
-func eachJoin(node *goquery.Selection, args ...string) (out interface{}, err error) {
+// eachJoin(sep) get each element text and join to string, return string.
+func (builtin BuiltinFunctions) EachJoin(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
 		sep = args[0]
@@ -226,6 +206,59 @@ func eachJoin(node *goquery.Selection, args ...string) (out interface{}, err err
 		list = append(list, strings.TrimSpace(selection.Text()))
 	})
 	return strings.Join(list, sep), nil
+}
+
+// eq(index) reduces the set of matched elements to the one at the specified index, return string.
+func (builtin BuiltinFunctions) Eq(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) <= 0 {
+		return "", fmt.Errorf("eq(index) must has index")
+	}
+	indexValue := strings.TrimSpace(args[0])
+	idx, err := strconv.Atoi(indexValue)
+	if err != nil {
+		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
+	}
+	return node.Eq(idx).Text(), nil
+}
+
+// eqAndAttr(index, name) reduces the set of matched elements to the one at the specified index, and attr() return string.
+func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) <= 1 {
+		return "", fmt.Errorf("eq(index) must has index")
+	}
+	indexValue := strings.TrimSpace(args[0])
+	idx, err := strconv.Atoi(indexValue)
+	if err != nil {
+		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
+	}
+	name := strings.TrimSpace(args[1])
+	return node.Eq(idx).AttrOr(name, ""), nil
+}
+
+// eqAndHtml(index) reduces the set of matched elements to the one at the specified index, and html() return string.
+func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) <= 1 {
+		return "", fmt.Errorf("eq(index) must has index")
+	}
+	indexValue := strings.TrimSpace(args[0])
+	idx, err := strconv.Atoi(indexValue)
+	if err != nil {
+		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
+	}
+	return node.Eq(idx).Html()
+}
+
+// eqAndOutHtml(index) reduces the set of matched elements to the one at the specified index, and outHtml() return string.
+func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) <= 1 {
+		return "", fmt.Errorf("eq(index) must has index")
+	}
+	indexValue := strings.TrimSpace(args[0])
+	idx, err := strconv.Atoi(indexValue)
+	if err != nil {
+		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
+	}
+	return goquery.OuterHtml(node.Eq(idx))
 }
 
 // RegisterFunc register function for parse

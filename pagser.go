@@ -37,7 +37,7 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 	return &Pagser{
 		config: cfg,
 		tagers: make(map[string]*Tager, 0),
-		funcs:  sysFuncs,
+		funcs:  builtinFuncMap,
 	}, nil
 }
 

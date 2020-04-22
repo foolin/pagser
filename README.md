@@ -199,6 +199,9 @@ type ExamData struct {
 
 > - eachJoin(sep) get each element text and join to string, return string.
 
+> - ...
+
+More builtin functions see docs: <https://pkg.go.dev/github.com/foolin/pagser>
 
 #### Extensions functions
 
