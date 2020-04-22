@@ -288,6 +288,10 @@ func main(){
 
 ```
 
+**Lookup function priority order**
+
+> struct method -> parent method -> ... -> global
+
 See advance example: <https://github.com/foolin/pagser/tree/master/_examples/advance>
 
 # Colly Example
