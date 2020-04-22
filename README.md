@@ -311,7 +311,8 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 
 # Examples
 
-[See Examples](https://github.com/foolin/pagser/tree/master/_examples)
+- [See Examples](https://github.com/foolin/pagser/tree/master/_examples)
+- [See Tests](https://github.com/foolin/pagser/blob/master/pagser_test.go)
 
 # Dependences
 - github.com/PuerkitoBio/goquery
