@@ -224,7 +224,7 @@ func (builtin BuiltinFunctions) Eq(node *goquery.Selection, args ...string) (out
 // eqAndAttr(index, name) reduces the set of matched elements to the one at the specified index, and attr() return string.
 func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 1 {
-		return "", fmt.Errorf("eq(index) must has index")
+		return "", fmt.Errorf("eq(index) must has index and attr name")
 	}
 	indexValue := strings.TrimSpace(args[0])
 	idx, err := strconv.Atoi(indexValue)
@@ -237,7 +237,7 @@ func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...strin
 
 // eqAndHtml(index) reduces the set of matched elements to the one at the specified index, and html() return string.
 func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 1 {
+	if len(args) <= 0 {
 		return "", fmt.Errorf("eq(index) must has index")
 	}
 	indexValue := strings.TrimSpace(args[0])
@@ -250,7 +250,7 @@ func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...strin
 
 // eqAndOutHtml(index) reduces the set of matched elements to the one at the specified index, and outHtml() return string.
 func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 1 {
+	if len(args) <= 0 {
 		return "", fmt.Errorf("eq(index) must has index")
 	}
 	indexValue := strings.TrimSpace(args[0])

@@ -29,6 +29,10 @@ type PageData struct {
 	NavEachHtml     []string     `pagser:".navlink li->eachHtml()"`
 	NavEachOutHtml  []string     `pagser:".navlink li->eachOutHtml()"`
 	NavJoinString   string       `pagser:".navlink li->eachJoin(|)"`
+	NavEq           string       `pagser:".navlink li->eq(1)"`
+	NavEqAttr       string       `pagser:".navlink li->eqAndAttr(1, id)"`
+	NavEqHtml       string       `pagser:".navlink li->eqAndHtml(1)"`
+	NavEqOutHtml    string       `pagser:".navlink li->eqAndOutHtml(1)"`
 	WordsSplitArray []string     `pagser:".words->split(|)"`
 	Value           string       `pagser:"input[name='feedback']->value()"`
 	SubPageData     *SubPageData `pagser:".navlink li:last-child"`
