@@ -174,20 +174,21 @@ fieldValue := refValueElem.Field(i)
 */
 func (p *Pagser) callFuncFieldValue(objRefValue reflect.Value, selTag *Tager, node *goquery.Selection) (interface{}, error) {
 	if selTag.FuncName != "" {
-		if fn, ok := p.funcs[selTag.FuncName]; ok {
-			outValue, err := fn(node, selTag.FuncParams...)
-			if err != nil {
-				return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
+		//call method
+		callMethod := objRefValue.MethodByName(selTag.FuncName)
+		if !callMethod.IsValid() {
+			//call element method
+			callMethod = objRefValue.Elem().MethodByName(selTag.FuncName)
+		}
+		if !callMethod.IsValid() {
+			//global function
+			if fn, ok := p.funcs[selTag.FuncName]; ok {
+				outValue, err := fn(node, selTag.FuncParams...)
+				if err != nil {
+					return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
+				}
+				return outValue, nil
 			}
-			return outValue, nil
-		}
-
-		refValueElem := objRefValue.Elem()
-		callMethod := refValueElem.MethodByName(selTag.FuncName)
-		if !callMethod.IsValid() {
-			callMethod = objRefValue.MethodByName(selTag.FuncName)
-		}
-		if !callMethod.IsValid() {
 			return nil, fmt.Errorf("not found method %v", selTag.FuncName)
 		}
 		callParams := make([]reflect.Value, 0)
