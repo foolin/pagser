@@ -41,7 +41,7 @@ import (
 // Define your own function interface
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
-//Builtin Functions
+// Builtin functions are registered with a lowercase initial, eg: Text -> text()
 type BuiltinFunctions struct {
 }
 
