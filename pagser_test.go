@@ -18,18 +18,20 @@ type PageData struct {
 	FillFieldFuncValue  string   `pagser:"h1->FillFieldFunc()"`
 	FillFieldOtherValue string   //Set value by FillFieldFunc()
 	NavList             []struct {
-		ID   int    `pagser:"a->attrInt(id, -1)"`
-		Name string `pagser:"a"`
-		Url  string `pagser:"a->attr(href)"`
+		ID             int    `pagser:"a->attrInt(id, -1)"`
+		Name           string `pagser:"a"`
+		Url            string `pagser:"a->attr(href)"`
+		ParentFuncName string `pagser:"a->ParentFunc()"`
 	} `pagser:".navlink li"`
-	NavTextList     []string `pagser:".navlink li"`
-	NavEachText     []string `pagser:".navlink li->eachText()"`
-	NavEachAttrID   []string `pagser:".navlink li->eachAttr(id)"`
-	NavEachHtml     []string `pagser:".navlink li->eachHtml()"`
-	NavEachOutHtml  []string `pagser:".navlink li->eachOutHtml()"`
-	NavJoinString   string   `pagser:".navlink li->eachJoin(|)"`
-	WordsSplitArray []string `pagser:".words->split(|)"`
-	Value           string   `pagser:"input[name='feedback']->value()"`
+	NavTextList     []string     `pagser:".navlink li"`
+	NavEachText     []string     `pagser:".navlink li->eachText()"`
+	NavEachAttrID   []string     `pagser:".navlink li->eachAttr(id)"`
+	NavEachHtml     []string     `pagser:".navlink li->eachHtml()"`
+	NavEachOutHtml  []string     `pagser:".navlink li->eachOutHtml()"`
+	NavJoinString   string       `pagser:".navlink li->eachJoin(|)"`
+	WordsSplitArray []string     `pagser:".words->split(|)"`
+	Value           string       `pagser:"input[name='feedback']->value()"`
+	SubPageData     *SubPageData `pagser:".navlink li:last-child"`
 }
 
 // this method will auto call, not need register.
@@ -38,15 +40,29 @@ func MyGlobalFunc(selection *goquery.Selection, args ...string) (out interface{}
 }
 
 // this method will auto call, not need register.
-func (h PageData) MyStructFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd PageData) MyStructFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "Struct-" + selection.Text(), nil
 }
 
+func (pd PageData) ParentFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "ParentFunc-" + selection.Text(), nil
+}
+
 // this method will auto call, not need register.
-func (h *PageData) FillFieldFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd *PageData) FillFieldFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	text := selection.Text()
-	h.FillFieldOtherValue = "This value is set by the FillFieldFunc() function -" + text
+	pd.FillFieldOtherValue = "This value is set by the FillFieldFunc() function -" + text
 	return "FillFieldFunc-" + text, nil
+}
+
+type SubPageData struct {
+	Text            string `pagser:"->text()"`
+	SubFuncValue    string `pagser:"->SubFunc()"`
+	ParentFuncValue string `pagser:"->ParentFunc()"`
+}
+
+func (spd SubPageData) SubFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "SubFunc-" + selection.Text(), nil
 }
 
 const rawPpageHtml = `

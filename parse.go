@@ -32,17 +32,24 @@ func (p *Pagser) ParseDocument(v interface{}, document *goquery.Document) (err e
 	return p.ParseSelection(v, document.Selection)
 }
 
-// ParseSelection parse selection to struct
 func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (err error) {
+	return p.doParse(v, nil, selection)
+}
+
+// ParseSelection parse selection to struct
+func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selection *goquery.Selection) (err error) {
 	objRefType := reflect.TypeOf(v)
 	objRefValue := reflect.ValueOf(v)
+
 	//log.Printf("%#v kind is %v | %v", v, objRefValue.Kind(), reflect.Ptr)
 	if objRefValue.Kind() != reflect.Ptr {
 		return fmt.Errorf("%v is non-pointer", objRefType)
 	}
+
 	if objRefValue.IsNil() {
 		return fmt.Errorf("%v is nil", objRefType)
 	}
+
 	objRefTypeElem := objRefType.Elem()
 	objRefValueElem := objRefValue.Elem()
 
@@ -76,7 +83,7 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 		var callOutValue interface{}
 		var callErr error
 		if tager.FuncName != "" {
-			callOutValue, callErr = p.callFuncFieldValue(objRefValue, tager, node)
+			callOutValue, callErr = p.findAndExecFunc(objRefValue, stackRefValues, tager, node)
 			if callErr != nil {
 				return fmt.Errorf("tag=`%v` parse func error: %v", tagValue, callErr)
 			}
@@ -89,13 +96,18 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 			continue
 		}
 
+		if stackRefValues == nil {
+			stackRefValues = make([]reflect.Value, 0)
+		}
+		stackRefValues = append(stackRefValues, objRefValue)
+
 		//set value
 		kind := fieldType.Type.Kind()
 		switch {
 		case kind == reflect.Ptr:
 			subModel := reflect.New(fieldType.Type.Elem())
 			fieldValue.Set(subModel)
-			err = p.ParseSelection(subModel.Interface(), node)
+			err = p.doParse(subModel.Interface(), stackRefValues, node)
 			if err != nil {
 				return fmt.Errorf("tag=`%v` %#v parser error: %v", tagValue, subModel, err)
 			}
@@ -111,14 +123,14 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 				itemValue := reflect.New(itemType).Elem()
 				switch {
 				case itemKind == reflect.Struct:
-					err = p.ParseSelection(itemValue.Addr().Interface(), subNode)
+					err = p.doParse(itemValue.Addr().Interface(), stackRefValues, subNode)
 					if err != nil {
 						err = fmt.Errorf("tag=`%v` %#v parser error: %v", tagValue, itemValue, err)
 						return false
 					}
 				case itemKind == reflect.Ptr && itemValue.Type().Elem().Kind() == reflect.Struct:
 					itemValue = reflect.New(itemType.Elem())
-					err = p.ParseSelection(itemValue.Interface(), subNode)
+					err = p.doParse(itemValue.Interface(), stackRefValues, subNode)
 					if err != nil {
 						err = fmt.Errorf("tag=`%v` %#v parser error: %v", tagValue, itemValue, err)
 						return false
@@ -126,7 +138,7 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 				default:
 					//slice.Index(i).Set(itemValue)
 					if tager.FuncName != "" {
-						itemOutValue, itemErr := p.callFuncFieldValue(objRefValue, tager, subNode)
+						itemOutValue, itemErr := p.findAndExecFunc(objRefValue, stackRefValues, tager, subNode)
 						//fmt.Printf("call slice func %v value: %v\n", tager.FuncName, itemOutValue)
 						if itemErr != nil {
 							err = fmt.Errorf("tag=`%v` parse slice item error: %v", tagValue, itemErr)
@@ -150,7 +162,7 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 			fieldValue.Set(slice)
 		case kind == reflect.Struct:
 			subModel := reflect.New(fieldType.Type)
-			err = p.ParseSelection(subModel.Interface(), node)
+			err = p.doParse(subModel.Interface(), stackRefValues, node)
 			if err != nil {
 				return fmt.Errorf("tag=`%v` %#v parser error: %v", tagValue, subModel, err)
 			}
@@ -172,42 +184,68 @@ func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (er
 fieldType := refTypeElem.Field(i)
 fieldValue := refValueElem.Field(i)
 */
-func (p *Pagser) callFuncFieldValue(objRefValue reflect.Value, selTag *Tager, node *goquery.Selection) (interface{}, error) {
+func (p *Pagser) findAndExecFunc(objRefValue reflect.Value, stackRefValues []reflect.Value, selTag *Tager, node *goquery.Selection) (interface{}, error) {
 	if selTag.FuncName != "" {
-		//call method
-		callMethod := objRefValue.MethodByName(selTag.FuncName)
-		if !callMethod.IsValid() {
-			//call element method
-			callMethod = objRefValue.Elem().MethodByName(selTag.FuncName)
-		}
-		if !callMethod.IsValid() {
-			//global function
-			if fn, ok := p.funcs[selTag.FuncName]; ok {
-				outValue, err := fn(node, selTag.FuncParams...)
-				if err != nil {
-					return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
-				}
-				return outValue, nil
-			}
-			return nil, fmt.Errorf("not found method %v", selTag.FuncName)
-		}
-		callParams := make([]reflect.Value, 0)
-		callParams = append(callParams, reflect.ValueOf(node))
 
-		callReturns := callMethod.Call(callParams)
-		if len(callReturns) <= 0 {
-			return nil, fmt.Errorf("method %v not return any value", selTag.FuncName)
+		//call object method
+		callMethod := findMethod(objRefValue, selTag.FuncName)
+		if callMethod.IsValid() {
+			//execute method
+			return execMethod(callMethod, selTag, node)
 		}
-		if len(callReturns) > 1 {
-			if err, ok := callReturns[len(callReturns)-1].Interface().(error); ok {
-				if err != nil {
-					return nil, fmt.Errorf("method %v return error: %v", selTag.FuncName, err)
+
+		//call root method
+		size := len(stackRefValues)
+		if size > 0 {
+			for i := size - 1; i >= 0; i-- {
+				callMethod = findMethod(stackRefValues[i], selTag.FuncName)
+				if callMethod.IsValid() {
+					//execute method
+					return execMethod(callMethod, selTag, node)
 				}
 			}
 		}
-		return callReturns[0].Interface(), nil
+
+		//global function
+		if fn, ok := p.funcs[selTag.FuncName]; ok {
+			outValue, err := fn(node, selTag.FuncParams...)
+			if err != nil {
+				return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
+			}
+			return outValue, nil
+		}
+
+		//not found method
+		return nil, fmt.Errorf("not found method %v", selTag.FuncName)
 	}
 	return strings.TrimSpace(node.Text()), nil
+}
+
+func findMethod(objRefValue reflect.Value, funcName string) reflect.Value {
+	callMethod := objRefValue.MethodByName(funcName)
+	if callMethod.IsValid() {
+		return callMethod
+	}
+	//call element method
+	return objRefValue.Elem().MethodByName(funcName)
+}
+
+func execMethod(callMethod reflect.Value, selTag *Tager, node *goquery.Selection) (interface{}, error) {
+	callParams := make([]reflect.Value, 0)
+	callParams = append(callParams, reflect.ValueOf(node))
+
+	callReturns := callMethod.Call(callParams)
+	if len(callReturns) <= 0 {
+		return nil, fmt.Errorf("method %v not return any value", selTag.FuncName)
+	}
+	if len(callReturns) > 1 {
+		if err, ok := callReturns[len(callReturns)-1].Interface().(error); ok {
+			if err != nil {
+				return nil, fmt.Errorf("method %v return error: %v", selTag.FuncName, err)
+			}
+		}
+	}
+	return callReturns[0].Interface(), nil
 }
 
 func setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v interface{}) (err error) {
