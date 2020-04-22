@@ -301,9 +301,9 @@ p := pagser.New()
 // On every a element which has href attribute call callback
 collector.OnHTML("body", func(e *colly.HTMLElement) {
 	//data parser model
-	var page MyStruct
+	var data PageData
 	//parse html data
-	err := p.ParseSelection(&page, e.Dom)
+	err := p.ParseSelection(&data, e.Dom)
 
 })
 
