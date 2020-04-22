@@ -7,21 +7,17 @@ import (
 	"testing"
 )
 
-//	"html":      html,
-//	"text":      text,
-//	"attr":      attr,
-//	"attrInt":   attrInt,
-//	"outerHtml": outHtml,
-//	"value":     value,
-type HtmlPage struct {
-	Title             string   `pagser:"title"`
-	Keywords          []string `pagser:"meta[name='keywords']->attrSplit(content)"`
-	H1                string   `pagser:"h1->text()"`
-	H1Html            string   `pagser:"h1->html()"`
-	H1OutHtml         string   `pagser:"h1->outerHtml()"`
-	MyGlobalFuncValue string   `pagser:"h1->MyGlobFunc()"`
-	MyStructFuncValue string   `pagser:"h1->MyStructFunc()"`
-	NavList           []struct {
+type PageData struct {
+	Title               string   `pagser:"title"`
+	Keywords            []string `pagser:"meta[name='keywords']->attrSplit(content)"`
+	H1                  string   `pagser:"h1->text()"`
+	H1Html              string   `pagser:"h1->html()"`
+	H1OutHtml           string   `pagser:"h1->outerHtml()"`
+	MyGlobalFuncValue   string   `pagser:"h1->MyGlobFunc()"`
+	MyStructFuncValue   string   `pagser:"h1->MyStructFunc()"`
+	FillFieldFuncValue  string   `pagser:"h1->FillFieldFunc()"`
+	FillFieldOtherValue string   //Set value by FillFieldFunc()
+	NavList             []struct {
 		ID   int    `pagser:"a->attrInt(id, -1)"`
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
@@ -37,13 +33,20 @@ type HtmlPage struct {
 }
 
 // this method will auto call, not need register.
-func MyGlobalFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	return "Global-" + node.Text(), nil
+func MyGlobalFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Global-" + selection.Text(), nil
 }
 
 // this method will auto call, not need register.
-func (h HtmlPage) MyStructFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	return "Struct-" + node.Text(), nil
+func (h PageData) MyStructFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Struct-" + selection.Text(), nil
+}
+
+// this method will auto call, not need register.
+func (h *PageData) FillFieldFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	text := selection.Text()
+	h.FillFieldOtherValue = "This value is set by the FillFieldFunc() function -" + text
+	return "FillFieldFunc-" + text, nil
 }
 
 const rawPpageHtml = `
@@ -84,7 +87,7 @@ func TestParse(t *testing.T) {
 	//register global function
 	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
 
-	var data HtmlPage
+	var data PageData
 	err = p.Parse(&data, rawPpageHtml)
 	if err != nil {
 		t.Fatal(err)
@@ -104,7 +107,7 @@ func TestPagser_ParseReader(t *testing.T) {
 	//register global function
 	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
 
-	var data HtmlPage
+	var data PageData
 	err = p.ParseReader(&data, res.Body)
 	if err != nil {
 		t.Fatal(err)
