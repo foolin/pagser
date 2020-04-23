@@ -32,25 +32,27 @@ type PageData struct {
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li:last-child"`
-	NavFirstID             int          `pagser:".navlink li:first-child->attrInt(id)"`
-	NavFirstIDDefaultValue int          `pagser:".navlink li:first-child->attrInt(id, -999)"`
-	NavTextList            []string     `pagser:".navlink li"`
-	NavEachText            []string     `pagser:".navlink li->eachText()"`
-	NavEachAttrID          []string     `pagser:".navlink li->eachAttr(id)"`
-	NavEachHtml            []string     `pagser:".navlink li->eachHtml()"`
-	NavEachOutHtml         []string     `pagser:".navlink li->eachOutHtml()"`
-	NavJoinString          string       `pagser:".navlink li->eachJoin(|)"`
-	NavEq                  string       `pagser:".navlink li->eq(1)"`
-	NavEqAttr              string       `pagser:".navlink li->eqAndAttr(1, id)"`
-	NavEqHtml              string       `pagser:".navlink li->eqAndHtml(1)"`
-	NavEqOutHtml           string       `pagser:".navlink li->eqAndOutHtml(1)"`
-	WordsSplitArray        []string     `pagser:".words->split(|)"`
-	WordsShow              bool         `pagser:".words->attrBool(show)"`
-	Value                  string       `pagser:"input[name='feedback']->value()"`
-	InputAttrBool          bool         `pagser:"input[name='feedback']->attrBool(no)"`
-	InputAttrBoolTrue      bool         `pagser:"input[name='feedback']->attrBool(no, true)"`
-	SameFuncValue          string       `pagser:"h1->SameFunc()"`
-	SubPageData            *SubPageData `pagser:".navlink li:last-child"`
+	NavFirstID             int            `pagser:".navlink li:first-child->attrInt(id)"`
+	NavLastID              uint           `pagser:".navlink li:last-child->attrInt(id)"`
+	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrInt(id, -999)"`
+	NavTextList            []string       `pagser:".navlink li"`
+	NavEachText            []string       `pagser:".navlink li->eachText()"`
+	NavEachAttrID          []string       `pagser:".navlink li->eachAttr(id)"`
+	NavEachHtml            []string       `pagser:".navlink li->eachHtml()"`
+	NavEachOutHtml         []string       `pagser:".navlink li->eachOutHtml()"`
+	NavJoinString          string         `pagser:".navlink li->eachJoin(|)"`
+	NavEq                  string         `pagser:".navlink li->eq(1)"`
+	NavEqAttr              string         `pagser:".navlink li->eqAndAttr(1, id)"`
+	NavEqHtml              string         `pagser:".navlink li->eqAndHtml(1)"`
+	NavEqOutHtml           string         `pagser:".navlink li->eqAndOutHtml(1)"`
+	WordsSplitArray        []string       `pagser:".words->split(|)"`
+	WordsShow              bool           `pagser:".words->attrBool(show)"`
+	Value                  string         `pagser:"input[name='feedback']->value()"`
+	InputAttrBool          bool           `pagser:"input[name='feedback']->attrBool(no)"`
+	InputAttrBoolTrue      bool           `pagser:"input[name='feedback']->attrBool(no, true)"`
+	SameFuncValue          string         `pagser:"h1->SameFunc()"`
+	SubPageData            *SubPageData   `pagser:".navlink li:last-child"`
+	SubPageDataList        []*SubPageData `pagser:".navlink li"`
 }
 
 // this method will auto call, not need register.
