@@ -158,7 +158,7 @@ func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string
 // attrInt(name, defaultValue = 0) get element attribute value and to int, return int.
 func (builtin BuiltinFunctions) AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
+		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id)")
 	}
 	name := args[0]
 	defaultValue := "0"
@@ -166,6 +166,7 @@ func (builtin BuiltinFunctions) AttrInt(node *goquery.Selection, args ...string)
 		defaultValue = args[1]
 	}
 	attrVal := node.AttrOr(name, defaultValue)
+	fmt.Printf("name: %v, attrVal: %v, defaultValue: %v\n", name, attrVal, defaultValue)
 	outVal, err := cast.ToIntE(attrVal)
 	if err != nil {
 		return cast.ToIntE(defaultValue)
