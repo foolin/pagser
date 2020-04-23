@@ -19,9 +19,12 @@ type PageData struct {
 	FillFieldFuncValue  string   `pagser:"h1->FillFieldFunc()"`
 	FillFieldOtherValue string   //Set value by FillFieldFunc()
 	NavList             []struct {
-		ID             int    `pagser:"->attrInt(id, -1)"`
-		Name           string `pagser:"a->text()"`
-		Url            string `pagser:"a->attr(href)"`
+		ID   int `pagser:"->attrInt(id, -1)"`
+		Link struct {
+			Name string `pagser:"->text()"`
+			Url  string `pagser:"->attr(href)"`
+		} `pagser:"a"`
+		LinkHtml       string `pagser:"a->html()"`
 		ParentFuncName string `pagser:"a->ParentFunc()"`
 	} `pagser:".navlink li"`
 	NavLast struct {

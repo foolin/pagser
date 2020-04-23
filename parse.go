@@ -56,6 +56,8 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 	for i := 0; i < objRefValueElem.NumField(); i++ {
 		fieldType := objRefTypeElem.Field(i)
 		fieldValue := objRefValueElem.Field(i)
+		kind := fieldType.Type.Kind()
+
 		//tagValue := fieldType.Tag.Get(parserTagName)
 		tagValue, tagOk := fieldType.Tag.Lookup(p.config.TagerName)
 		if !tagOk {
@@ -91,7 +93,6 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 			if svErr != nil {
 				return fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
 			}
-
 			//goto parse next field
 			continue
 		}
@@ -102,7 +103,6 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 		stackRefValues = append(stackRefValues, objRefValue)
 
 		//set value
-		kind := fieldType.Type.Kind()
 		switch {
 		case kind == reflect.Ptr:
 			subModel := reflect.New(fieldType.Type.Elem())
@@ -136,22 +136,7 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 						return false
 					}
 				default:
-					//slice.Index(i).Set(itemValue)
-					if tag.FuncName != "" {
-						itemOutValue, itemErr := p.findAndExecFunc(objRefValue, stackRefValues, tag, subNode)
-						//fmt.Printf("call slice func %v value: %v\n", tag.FuncName, itemOutValue)
-						if itemErr != nil {
-							err = fmt.Errorf("tag=`%v` parse slice item error: %v", tagValue, itemErr)
-							return false
-						}
-						svErr := setRefectValue(itemType.Kind(), itemValue, itemOutValue)
-						if err != nil {
-							err = fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
-							return false
-						}
-					} else {
-						itemValue.SetString(strings.TrimSpace(subNode.Text()))
-					}
+					itemValue.SetString(strings.TrimSpace(subNode.Text()))
 				}
 				slice.Index(i).Set(itemValue)
 				return true
