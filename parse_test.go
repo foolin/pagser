@@ -10,7 +10,8 @@ import (
 type PageData struct {
 	Title               string   `pagser:"title"`
 	Keywords            []string `pagser:"meta[name='keywords']->attrSplit(content)"`
-	H1                  string   `pagser:"h1->text()"`
+	H1                  string   `pagser:"h1"`
+	H1Text              string   `pagser:"h1->text()"`
 	H1Html              string   `pagser:"h1->html()"`
 	H1OutHtml           string   `pagser:"h1->outerHtml()"`
 	MyGlobalFuncValue   string   `pagser:"h1->MyGlobFunc()"`
@@ -19,7 +20,7 @@ type PageData struct {
 	FillFieldOtherValue string   //Set value by FillFieldFunc()
 	NavList             []struct {
 		ID             int    `pagser:"a->attrInt(id, -1)"`
-		Name           string `pagser:"a"`
+		Name           string `pagser:"a->text()"`
 		Url            string `pagser:"a->attr(href)"`
 		ParentFuncName string `pagser:"a->ParentFunc()"`
 	} `pagser:".navlink li"`
@@ -35,12 +36,18 @@ type PageData struct {
 	NavEqOutHtml    string       `pagser:".navlink li->eqAndOutHtml(1)"`
 	WordsSplitArray []string     `pagser:".words->split(|)"`
 	Value           string       `pagser:"input[name='feedback']->value()"`
+	SameFuncValue   string       `pagser:"h1->SameFunc()"`
 	SubPageData     *SubPageData `pagser:".navlink li:last-child"`
 }
 
 // this method will auto call, not need register.
 func MyGlobalFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "Global-" + selection.Text(), nil
+}
+
+// this method will auto call, not need register.
+func SameFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Global-Same-Func-" + selection.Text(), nil
 }
 
 // this method will auto call, not need register.
@@ -59,14 +66,23 @@ func (pd *PageData) FillFieldFunc(selection *goquery.Selection, args ...string) 
 	return "FillFieldFunc-" + text, nil
 }
 
+func (pd *PageData) SameFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Struct-Same-Func-" + selection.Text(), nil
+}
+
 type SubPageData struct {
 	Text            string `pagser:"->text()"`
 	SubFuncValue    string `pagser:"->SubFunc()"`
 	ParentFuncValue string `pagser:"->ParentFunc()"`
+	SameFuncValue   string `pagser:"->SameFunc()"`
 }
 
 func (spd SubPageData) SubFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "SubFunc-" + selection.Text(), nil
+}
+
+func (spd SubPageData) SameFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	return "Sub-Struct-Same-Func-" + selection.Text(), nil
 }
 
 const rawPpageHtml = `
@@ -106,6 +122,7 @@ func TestParse(t *testing.T) {
 
 	//register global function
 	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
+	p.RegisterFunc("SameFunc", SameFunc)
 
 	var data PageData
 	err = p.Parse(&data, rawPpageHtml)

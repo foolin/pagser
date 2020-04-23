@@ -20,16 +20,16 @@ var rxFunc = regexp.MustCompile("^\\s*([a-zA-Z]+)\\s*(\\(([^\\)]*)\\))?\\s*$")
 //	ignoreTagSymbol = "-"
 //)
 
-// Tager struct tag info
-type Tager struct {
+// parseTag struct tag info
+type parseTag struct {
 	Selector   string
 	FuncName   string
 	FuncParams []string
 }
 
-func (p *Pagser) newTager(tagValue string) *Tager {
+func (p *Pagser) newTag(tagValue string) *parseTag {
 	//fmt.Println("tag value: ", tagValue)
-	cssParser := &Tager{}
+	cssParser := &parseTag{}
 	if tagValue == "" {
 		return cssParser
 	}
@@ -43,13 +43,13 @@ func (p *Pagser) newTager(tagValue string) *Tager {
 			funcValue = selectors[i]
 		}
 	}
-	matchs := rxFunc.FindStringSubmatch(funcValue)
-	if len(matchs) < 3 {
+	matches := rxFunc.FindStringSubmatch(funcValue)
+	if len(matches) < 3 {
 		return cssParser
 	}
-	cssParser.FuncName = strings.TrimSpace(matchs[1])
-	//cssParser.FuncParams = strings.Split(matchs[2], ",")
-	cssParser.FuncParams = parseFuncParams(matchs[3])
+	cssParser.FuncName = strings.TrimSpace(matches[1])
+	//cssParser.FuncParams = strings.Split(matches[2], ",")
+	cssParser.FuncParams = parseFuncParams(matches[3])
 	if p.config.Debug {
 		fmt.Printf("----- debug -----\n`%v`\n%v\n", tagValue, prettyJson(cssParser))
 	}

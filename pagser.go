@@ -12,9 +12,9 @@ import "errors"
 
 // Pagser the page parser
 type Pagser struct {
-	config Config
-	tagers map[string]*Tager   // tager value => Tager
-	funcs  map[string]CallFunc // name => func
+	config   Config
+	ctxTags  map[string]*parseTag // tag value => parseTag
+	ctxFuncs map[string]CallFunc  // name => func
 }
 
 // New create client
@@ -35,9 +35,9 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 		return nil, errors.New("IgnoreSymbol must not empty")
 	}
 	return &Pagser{
-		config: cfg,
-		tagers: make(map[string]*Tager, 0),
-		funcs:  builtinFuncMap,
+		config:   cfg,
+		ctxTags:  make(map[string]*parseTag, 0),
+		ctxFuncs: builtinFuncMap,
 	}, nil
 }
 

@@ -263,6 +263,6 @@ func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...st
 
 // RegisterFunc register function for parse
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) error {
-	p.funcs[name] = fn
+	p.ctxFuncs[name] = fn
 	return nil
 }
