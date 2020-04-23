@@ -36,7 +36,7 @@ type PageData struct {
 	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
 	H1       string   `pagser:"h1"`
 	Navs     []struct {
-		ID   int    `pagser:"->attrInt(id, -1)"`
+		ID   int    `pagser:"->attrEmpty(id, -1)"`
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`

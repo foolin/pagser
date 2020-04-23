@@ -9,7 +9,7 @@ type ExampleData struct {
 	Title    string   `pagser:"title"`
 	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
 	Navs     []struct {
-		ID   int    `pagser:"->attrInt(id, -1)"`
+		ID   int    `pagser:"->attrEmpty(id, -1)"`
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
@@ -19,7 +19,7 @@ type ConfigData struct {
 	Title    string   `query:"title"`
 	Keywords []string `query:"meta[name='keywords']@attrSplit(content)"`
 	Navs     []struct {
-		ID   int    `query:"@attrInt(id, -1)"`
+		ID   int    `query:"@attrEmpty(id, -1)"`
 		Name string `query:"a@text()"`
 		Url  string `query:"a@attr(href)"`
 	} `query:".navlink li"`

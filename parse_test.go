@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -19,7 +20,7 @@ type PageData struct {
 	FillFieldFuncValue  string   `pagser:"h1->FillFieldFunc()"`
 	FillFieldOtherValue string   //Set value by FillFieldFunc()
 	NavList             []struct {
-		ID   int `pagser:"->attrInt(id, -1)"`
+		ID   int `pagser:"->attrEmpty(id, -1)"`
 		Link struct {
 			Name string `pagser:"->text()"`
 			Url  string `pagser:"->attr(href)"`
@@ -28,13 +29,13 @@ type PageData struct {
 		ParentFuncName string `pagser:"a->ParentFunc()"`
 	} `pagser:".navlink li"`
 	NavLast struct {
-		ID   int    `pagser:"->attrInt(id)"`
+		ID   int    `pagser:"->attrEmpty(id, 0)"`
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li:last-child"`
-	NavFirstID             int            `pagser:".navlink li:first-child->attrInt(id, 0)"`
+	NavFirstID             int            `pagser:".navlink li:first-child->attrEmpty(id, 0)"`
 	NavLastID              uint           `pagser:".navlink li:last-child->attr(id)"`
-	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrInt(id, -999)"`
+	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrEmpty(id, -999)"`
 	NavTextList            []string       `pagser:".navlink li"`
 	NavEachText            []string       `pagser:".navlink li->eachText()"`
 	NavEachAttrID          []string       `pagser:".navlink li->eachAttr(id)"`
@@ -46,10 +47,9 @@ type PageData struct {
 	NavEqHtml              string         `pagser:".navlink li->eqAndHtml(1)"`
 	NavEqOutHtml           string         `pagser:".navlink li->eqAndOutHtml(1)"`
 	WordsSplitArray        []string       `pagser:".words->split(|)"`
-	WordsShow              bool           `pagser:".words->attrBool(show)"`
+	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
 	Value                  string         `pagser:"input[name='feedback']->value()"`
-	InputAttrBool          bool           `pagser:"input[name='feedback']->attrBool(no)"`
-	InputAttrBoolTrue      bool           `pagser:"input[name='feedback']->attrBool(no, true)"`
+	InputAttrEmptyBool     bool           `pagser:"input[name='feedback']->attrEmpty(no, false)"`
 	SameFuncValue          string         `pagser:"h1->SameFunc()"`
 	SubPageData            *SubPageData   `pagser:".navlink li:last-child"`
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
@@ -128,9 +128,26 @@ const rawPpageHtml = `
 `
 
 func TestParse(t *testing.T) {
-	cfg := DefaultConfig()
-	cfg.CastError = true
-	cfg.Debug = true
+	p := New()
+	//register global function
+	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
+	p.RegisterFunc("SameFunc", SameFunc)
+
+	var data PageData
+	err := p.Parse(&data, rawPpageHtml)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("json: %v\n", prettyJson(data))
+}
+
+func TestPagser_ParseDocument(t *testing.T) {
+	cfg := Config{
+		TagerName:  "pagser",
+		FuncSymbol: "->",
+		CastError:  true,
+		Debug:      true,
+	}
 	p, err := NewWithConfig(cfg)
 	if err != nil {
 		t.Fatal(err)
@@ -141,7 +158,11 @@ func TestParse(t *testing.T) {
 	p.RegisterFunc("SameFunc", SameFunc)
 
 	var data PageData
-	err = p.Parse(&data, rawPpageHtml)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawPageHtml))
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = p.ParseDocument(&data, doc)
 	if err != nil {
 		t.Fatal(err)
 	}

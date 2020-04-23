@@ -11,7 +11,7 @@ type PageData struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
-		ID   int    `pagser:"->attrInt(id, -1)"`
+		ID   int    `pagser:"->attrEmpty(id, -1)"`
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`

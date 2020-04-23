@@ -3,7 +3,6 @@ package pagser
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/spf13/cast"
 	"strconv"
 	"strings"
 )
@@ -48,24 +47,26 @@ type BuiltinFunctions struct {
 
 var builtinFuncObj BuiltinFunctions
 var builtinFuncMap = map[string]CallFunc{
-	"text":         builtinFuncObj.Text,
-	"eachText":     builtinFuncObj.EachText,
-	"html":         builtinFuncObj.Html,
-	"eachHtml":     builtinFuncObj.EachHtml,
-	"outerHtml":    builtinFuncObj.OutHtml,
-	"eachOutHtml":  builtinFuncObj.EachOutHtml, //
-	"attr":         builtinFuncObj.Attr,        //
-	"eachAttr":     builtinFuncObj.EachAttr,
-	"attrInt":      builtinFuncObj.AttrInt,
-	"attrBool":     builtinFuncObj.AttrBool,
-	"attrSplit":    builtinFuncObj.AttrSplit,
-	"value":        builtinFuncObj.Value,
-	"split":        builtinFuncObj.Split,
-	"eachJoin":     builtinFuncObj.EachJoin,
-	"eq":           builtinFuncObj.Eq,
-	"eqAndAttr":    builtinFuncObj.EqAndAttr,
-	"eqAndHtml":    builtinFuncObj.EqAndHtml,
-	"eqAndOutHtml": builtinFuncObj.EqAndOutHtml,
+	"text":          builtinFuncObj.Text,
+	"textEmpty":     builtinFuncObj.TextEmpty,
+	"eachText":      builtinFuncObj.EachText,
+	"eachTextEmpty": builtinFuncObj.EachTextEmpty,
+	"html":          builtinFuncObj.Html,
+	"eachHtml":      builtinFuncObj.EachHtml,
+	"outerHtml":     builtinFuncObj.OutHtml,
+	"eachOutHtml":   builtinFuncObj.EachOutHtml,
+	"attr":          builtinFuncObj.Attr,
+	"attrEmpty":     builtinFuncObj.AttrEmpty,
+	"eachAttr":      builtinFuncObj.EachAttr,
+	"eachAttrEmpty": builtinFuncObj.EachAttrEmpty,
+	"attrSplit":     builtinFuncObj.AttrSplit,
+	"value":         builtinFuncObj.Value,
+	"split":         builtinFuncObj.Split,
+	"eachJoin":      builtinFuncObj.EachJoin,
+	"eq":            builtinFuncObj.Eq,
+	"eqAndAttr":     builtinFuncObj.EqAndAttr,
+	"eqAndHtml":     builtinFuncObj.EqAndHtml,
+	"eqAndOutHtml":  builtinFuncObj.EqAndOutHtml,
 }
 
 // text() get element  text, return string, this is default function, if not define function in struct tag.
@@ -73,11 +74,41 @@ func (builtin BuiltinFunctions) Text(node *goquery.Selection, args ...string) (o
 	return strings.TrimSpace(node.Text()), nil
 }
 
+// textEmpty(defaultValue) get element text, if empty will return defaultValue, return string.
+func (builtin BuiltinFunctions) TextEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("textEmpty(defaultValue) must has defaultValue")
+	}
+	defaultValue := args[0]
+	value := strings.TrimSpace(node.Text())
+	if value == "" {
+		value = defaultValue
+	}
+	return value, nil
+}
+
 // eachText() get each element text, return []string.
 func (builtin BuiltinFunctions) EachText(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.Each(func(i int, selection *goquery.Selection) {
 		list = append(list, strings.TrimSpace(selection.Text()))
+	})
+	return list, nil
+}
+
+// eachTextEmpty(defaultValue) get each element text, return []string.
+func (builtin BuiltinFunctions) EachTextEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("eachTextEmpty(defaultValue) must has defaultValue")
+	}
+	defaultValue := args[0]
+	list := make([]string, 0)
+	node.Each(func(i int, selection *goquery.Selection) {
+		value := strings.TrimSpace(selection.Text())
+		if value == "" {
+			value = defaultValue
+		}
+		list = append(list, value)
 	})
 	return list, nil
 }
@@ -132,10 +163,10 @@ func (builtin BuiltinFunctions) EachOutHtml(node *goquery.Selection, args ...str
 	return list, nil
 }
 
-// attr(name) get element attribute value, return string.
+// attr(name, defaultValue='') get element attribute value, return string.
 func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 0 {
-		return "", fmt.Errorf("attr(xxx) must has name")
+	if len(args) < 1 {
+		return "", fmt.Errorf("attr(name) must has name")
 	}
 	name := args[0]
 	defaultValue := ""
@@ -146,10 +177,24 @@ func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (o
 	return val, nil
 }
 
+// attrEmpty(name, defaultValue) get element attribute value, return string.
+func (builtin BuiltinFunctions) AttrEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 2 {
+		return "", fmt.Errorf("attr(name, defaultValue) must has name and default value")
+	}
+	name := args[0]
+	defaultValue := args[1]
+	value := strings.TrimSpace(node.AttrOr(name, defaultValue))
+	if value == "" {
+		value = defaultValue
+	}
+	return value, nil
+}
+
 // eachAttr() get each element attribute value, return []string.
 func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 0 {
-		return "", fmt.Errorf("attr(xxx) must has name")
+	if len(args) < 1 {
+		return "", fmt.Errorf("attr(name) must has name")
 	}
 	name := args[0]
 	list := make([]string, 0)
@@ -159,41 +204,22 @@ func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string
 	return list, nil
 }
 
-// attrInt(name, defaultValue = 0) get element attribute value and to int, return int.
-func (builtin BuiltinFunctions) AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) < 1 {
-		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id)")
+// eachAttrEmpty(defaultValue) get each element attribute value, return []string.
+func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 2 {
+		return "", fmt.Errorf("attr(name) must has name")
 	}
 	name := args[0]
-	defaultValue := "0"
-	if len(args) > 1 {
-		defaultValue = args[1]
-	}
-	attrVal := node.AttrOr(name, defaultValue)
-	fmt.Printf("name: %v, attrVal: %v, defaultValue: %v\n", name, attrVal, defaultValue)
-	outVal, err := cast.ToIntE(attrVal)
-	if err != nil {
-		return cast.ToIntE(defaultValue)
-	}
-	return outVal, nil
-}
-
-// attrBool(name, defaultValue = false) get element attribute value and to int, return int.
-func (builtin BuiltinFunctions) AttrBool(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) < 1 {
-		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
-	}
-	name := args[0]
-	defaultValue := "false"
-	if len(args) > 1 {
-		defaultValue = args[1]
-	}
-	attrVal := node.AttrOr(name, defaultValue)
-	outVal, err := cast.ToBoolE(attrVal)
-	if err != nil {
-		return cast.ToBoolE(defaultValue)
-	}
-	return outVal, nil
+	defaultValue := args[1]
+	list := make([]string, 0)
+	node.Each(func(i int, selection *goquery.Selection) {
+		value := strings.TrimSpace(selection.AttrOr(name, ""))
+		if value == "" {
+			value = defaultValue
+		}
+		list = append(list, value)
+	})
+	return list, nil
 }
 
 // attrSplit(name, sep)  get attribute value and split by separator to array string.
