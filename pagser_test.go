@@ -64,6 +64,7 @@ func TestNewWithConfig(t *testing.T) {
 	cfg := Config{
 		TagerName:  "query",
 		FuncSymbol: "@",
+		CastError:  true,
 		Debug:      true,
 	}
 	p, err := NewWithConfig(cfg)

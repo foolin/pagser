@@ -81,6 +81,7 @@ func ExampleNewWithConfig() {
 	cfg := Config{
 		TagerName:  "pagser",
 		FuncSymbol: "->",
+		CastError:  false,
 		Debug:      false,
 	}
 	p, err := NewWithConfig(cfg)

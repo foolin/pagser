@@ -63,6 +63,7 @@ func main() {
 	cfg := pagser.Config{
 		TagerName:  "pagser",
 		FuncSymbol: "->",
+		CastError:  true,
 		Debug:      true,
 	}
 	p, err := pagser.NewWithConfig(cfg)

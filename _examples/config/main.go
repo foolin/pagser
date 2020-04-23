@@ -44,7 +44,8 @@ func main() {
 	cfg := pagser.Config{
 		TagerName:  "query",
 		FuncSymbol: "@",
-		Debug:      false,
+		CastError:  true,
+		Debug:      true,
 	}
 	p, err := pagser.NewWithConfig(cfg)
 	if err != nil {
