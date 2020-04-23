@@ -6,17 +6,26 @@ import (
 	"log"
 )
 
-const rawPageHtml = `
+type ExampleData struct {
+	Title    string   `query:"title"`
+	Keywords []string `query:"meta[name='keywords']@attrSplit(content)"`
+	Navs     []struct {
+		ID   int    `query:"@attrInt(id, -1)"`
+		Name string `query:"a@text()"`
+		Url  string `query:"a@attr(href)"`
+	} `query:".navlink li"`
+}
+
+const rawExampleHtml = `
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Pagser Title</title>
+    <title>Pagser Example</title>
 	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
 </head>
 
 <body>
-	<h1>H1 Pagser Example</h1>
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
@@ -31,32 +40,24 @@ const rawPageHtml = `
 </html>
 `
 
-type PageData struct {
-	Title    string   `pagser:"title"`
-	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
-	H1       string   `pagser:"h1"`
-	Navs     []struct {
-		ID   int    `pagser:"->attrInt(id, -1)"`
-		Name string `pagser:"a->text()"`
-		Url  string `pagser:"a->attr(href)"`
-	} `pagser:".navlink li"`
-}
-
 func main() {
-	//New default config
-	p := pagser.New()
-
-	//data parser model
-	var data PageData
-	//parse html data
-	err := p.Parse(&data, rawPageHtml)
-	//check error
+	cfg := pagser.Config{
+		TagerName:    "query",
+		FuncSymbol:   "@",
+		IgnoreSymbol: "-",
+		Debug:        false,
+	}
+	p, err := pagser.NewWithConfig(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//print data
-	log.Printf("Page data json: \n-------------\n%v\n-------------\n", toJson(data))
+	var data ExampleData
+	err = p.Parse(&data, rawExampleHtml)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("json: %v\n", toJson(data))
 }
 
 func toJson(v interface{}) string {

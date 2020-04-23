@@ -45,6 +45,7 @@ const rawPageHtml = `
 <head>
     <meta charset="utf-8">
     <title>Pagser Title</title>
+	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
 </head>
 
 <body>
@@ -64,11 +65,12 @@ const rawPageHtml = `
 `
 
 type PageData struct {
-	Title string `pagser:"title"`
-	H1    string `pagser:"h1"`
-	Navs  []struct {
+	Title    string   `pagser:"title"`
+	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
+	H1       string   `pagser:"h1"`
+	Navs     []struct {
 		ID   int    `pagser:"->attrInt(id, -1)"`
-		Name string `pagser:"a"`
+		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
 }
@@ -95,7 +97,6 @@ func toJson(v interface{}) string {
 	return string(data)
 }
 
-
 ```
 
 Run output:
@@ -105,6 +106,15 @@ Page data json:
 -------------
 {
 	"Title": "Pagser Title",
+	"Keywords": [
+		"golang",
+		"pagser",
+		"goquery",
+		"html",
+		"page",
+		"parser",
+		"colly"
+	],
 	"H1": "H1 Pagser Example",
 	"Navs": [
 		{
