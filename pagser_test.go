@@ -6,8 +6,18 @@ import (
 )
 
 type ExampleData struct {
+	Title    string   `pagser:"title"`
+	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
+	Navs     []struct {
+		ID   int    `pagser:"->attrInt(id, -1)"`
+		Name string `pagser:"a->text()"`
+		Url  string `pagser:"a->attr(href)"`
+	} `pagser:".navlink li"`
+}
+
+type ConfigData struct {
 	Title    string   `query:"title"`
-	Keywords []string `query:"meta[name='keywords']->attrSplit(content)"`
+	Keywords []string `query:"meta[name='keywords']@attrSplit(content)"`
 	Navs     []struct {
 		ID   int    `query:"@attrInt(id, -1)"`
 		Name string `query:"a@text()"`
@@ -21,6 +31,7 @@ const rawExampleHtml = `
 <head>
     <meta charset="utf-8">
     <title>Pagser Example</title>
+	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
 </head>
 
 <body>
@@ -38,19 +49,29 @@ const rawExampleHtml = `
 </html>
 `
 
+func TestNew(t *testing.T) {
+	p := New()
+
+	var data ExampleData
+	err := p.Parse(&data, rawExampleHtml)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("json: %v\n", prettyJson(data))
+}
+
 func TestNewWithConfig(t *testing.T) {
 	cfg := Config{
-		TagerName:    "query",
-		FuncSymbol:   "@",
-		IgnoreSymbol: "-",
-		Debug:        false,
+		TagerName:  "query",
+		FuncSymbol: "@",
+		Debug:      true,
 	}
 	p, err := NewWithConfig(cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	var data ExampleData
+	var data ConfigData
 	err = p.Parse(&data, rawExampleHtml)
 	if err != nil {
 		t.Fatal(err)

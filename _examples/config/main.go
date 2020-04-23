@@ -42,10 +42,9 @@ const rawExampleHtml = `
 
 func main() {
 	cfg := pagser.Config{
-		TagerName:    "query",
-		FuncSymbol:   "@",
-		IgnoreSymbol: "-",
-		Debug:        false,
+		TagerName:  "query",
+		FuncSymbol: "@",
+		Debug:      false,
 	}
 	p, err := pagser.NewWithConfig(cfg)
 	if err != nil {

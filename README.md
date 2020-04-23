@@ -29,7 +29,7 @@ See [Pagser](https://pkg.go.dev/github.com/foolin/pagser)
 
 # Usage
 
-```go
+```golang
 
 package main
 
@@ -145,12 +145,11 @@ Page data json:
 
 # Configuration
 
-```go
+```golang
 
 type Config struct {
 	TagerName    string //struct tag name, default is `pagser`
 	FuncSymbol   string //Function symbol, default is `->`
-	IgnoreSymbol string //Ignore symbol, default is `-`
 	Debug        bool   //Debug mode, debug will print some log, default is `false`
 }
 
@@ -164,7 +163,7 @@ type Config struct {
 [goquery selector]->[function]
 ```
 Example:
-```go
+```golang
 
 type ExamData struct {
 	Herf string `pagser:".navLink li a->attr(href)"`
@@ -220,7 +219,7 @@ More builtin functions see docs: <https://pkg.go.dev/github.com/foolin/pagser>
 >- UgcHtml() //sanitize html
 
 Extensions function need register, like:
-```go
+```golang
 import "github.com/foolin/pagser/extensions/markdown"
 
 p := pagser.New()
@@ -233,14 +232,14 @@ markdown.Register(p)
 #### Write my function
 
 **Function interface**
-```go
+```golang
 
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 ```
 
 **1. Write global function:**
-```go
+```golang
 
 //global function need call pagser.RegisterFunc("MyGlob", MyGlobalFunc) before use it.
 // this global method must call pagser.RegisterFunc("MyGlob", MyGlobalFunc).
@@ -273,7 +272,7 @@ func main(){
 
 
 **2. Write struct function:**
-```go
+```golang
 
 type PageData struct{
   MyFuncValue int    `pagser:"->MyFunc()"`
@@ -310,7 +309,7 @@ See advance example: <https://github.com/foolin/pagser/tree/master/_examples/adv
 # Colly Example
 
 Work with colly:
-```go
+```golang
 
 p := pagser.New()
 

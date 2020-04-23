@@ -14,12 +14,6 @@ import (
 //->attr(xxx)
 var rxFunc = regexp.MustCompile("^\\s*([a-zA-Z]+)\\s*(\\(([^\\)]*)\\))?\\s*$")
 
-//const (
-//	parserTagName  = "pagser"
-//	parserSplitSep = "->"
-//	ignoreTagSymbol = "-"
-//)
-
 // parseTag struct tag info
 type parseTag struct {
 	Selector   string

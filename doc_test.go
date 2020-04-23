@@ -12,6 +12,7 @@ const rawPageHtml = `
 <head>
     <meta charset="utf-8">
     <title>Pagser Title</title>
+	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
 </head>
 
 <body>
@@ -78,10 +79,9 @@ func ExamplePagser_ParseReader() {
 
 func ExampleNewWithConfig() {
 	cfg := Config{
-		TagerName:    "pagser",
-		FuncSymbol:   "->",
-		IgnoreSymbol: "-",
-		Debug:        false,
+		TagerName:  "pagser",
+		FuncSymbol: "->",
+		Debug:      false,
 	}
 	p, err := NewWithConfig(cfg)
 	if err != nil {

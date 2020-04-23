@@ -31,9 +31,6 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.FuncSymbol == "" {
 		return nil, errors.New("FuncSymbol must not empty")
 	}
-	if cfg.IgnoreSymbol == "" {
-		return nil, errors.New("IgnoreSymbol must not empty")
-	}
 	return &Pagser{
 		config:   cfg,
 		ctxTags:  make(map[string]*parseTag, 0),

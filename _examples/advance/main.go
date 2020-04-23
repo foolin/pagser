@@ -61,10 +61,9 @@ func MyGlobalFunc(node *goquery.Selection, args ...string) (out interface{}, err
 func main() {
 	//New with config
 	cfg := pagser.Config{
-		TagerName:    "pagser",
-		FuncSymbol:   "->",
-		IgnoreSymbol: "-",
-		Debug:        true,
+		TagerName:  "pagser",
+		FuncSymbol: "->",
+		Debug:      true,
 	}
 	p, err := pagser.NewWithConfig(cfg)
 	if err != nil {

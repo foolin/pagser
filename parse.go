@@ -65,7 +65,7 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 			}
 			continue
 		}
-		if tagValue == p.config.IgnoreSymbol {
+		if tagValue == ignoreSymbol {
 			continue
 		}
 

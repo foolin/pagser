@@ -3,6 +3,7 @@ package pagser
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/spf13/cast"
 	"strconv"
 	"strings"
 )
@@ -56,6 +57,7 @@ var builtinFuncMap = map[string]CallFunc{
 	"attr":         builtinFuncObj.Attr,        //
 	"eachAttr":     builtinFuncObj.EachAttr,
 	"attrInt":      builtinFuncObj.AttrInt,
+	"attrBool":     builtinFuncObj.AttrBool,
 	"attrSplit":    builtinFuncObj.AttrSplit,
 	"value":        builtinFuncObj.Value,
 	"split":        builtinFuncObj.Split,
@@ -153,17 +155,38 @@ func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string
 	return list, nil
 }
 
-// attrInt(name, defaultValue) get element attribute value and to int, return int.
+// attrInt(name, defaultValue = 0) get element attribute value and to int, return int.
 func (builtin BuiltinFunctions) AttrInt(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) < 2 {
+	if len(args) < 1 {
 		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
 	}
 	name := args[0]
-	defaultValue := args[1]
+	defaultValue := "0"
+	if len(args) > 1 {
+		defaultValue = args[1]
+	}
 	attrVal := node.AttrOr(name, defaultValue)
-	outVal, err := strconv.Atoi(attrVal)
+	outVal, err := cast.ToIntE(attrVal)
 	if err != nil {
-		return strconv.Atoi(defaultValue)
+		return cast.ToIntE(defaultValue)
+	}
+	return outVal, nil
+}
+
+// attrBool(name, defaultValue = false) get element attribute value and to int, return int.
+func (builtin BuiltinFunctions) AttrBool(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("attrInt(name,defaultValue) must has name and default value, eg: attrInt(id,-1)")
+	}
+	name := args[0]
+	defaultValue := "false"
+	if len(args) > 1 {
+		defaultValue = args[1]
+	}
+	attrVal := node.AttrOr(name, defaultValue)
+	outVal, err := cast.ToBoolE(attrVal)
+	if err != nil {
+		return cast.ToBoolE(defaultValue)
 	}
 	return outVal, nil
 }
