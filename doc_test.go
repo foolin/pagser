@@ -42,7 +42,7 @@ type ExampPage struct {
 }
 
 func ExamplePagser_Parse() {
-	//New default config
+	//New default Config
 	p := New()
 	//data parser model
 	var page ExampPage
@@ -63,7 +63,7 @@ func ExamplePagser_ParseReader() {
 	}
 	defer resp.Body.Close()
 
-	//New default config
+	//New default Config
 	p := New()
 	//data parser model
 	var page ExampPage

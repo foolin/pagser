@@ -59,11 +59,11 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 		kind := fieldType.Type.Kind()
 
 		//tagValue := fieldType.Tag.Get(parserTagName)
-		tagValue, tagOk := fieldType.Tag.Lookup(p.config.TagerName)
+		tagValue, tagOk := fieldType.Tag.Lookup(p.Config.TagerName)
 		if !tagOk {
-			if p.config.Debug {
+			if p.Config.Debug {
 				fmt.Printf("[WARN] not found tag name=[%v] in field: %v, eg: `%v:\".navlink a->attr(href)\"`\n",
-					p.config.TagerName, fieldType.Name, p.config.TagerName)
+					p.Config.TagerName, fieldType.Name, p.Config.TagerName)
 			}
 			continue
 		}
@@ -89,7 +89,7 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 			if callErr != nil {
 				return fmt.Errorf("tag=`%v` parse func error: %v", tagValue, callErr)
 			}
-			svErr := setRefectValue(fieldType.Type.Kind(), fieldValue, callOutValue)
+			svErr := p.setRefectValue(fieldType.Type.Kind(), fieldValue, callOutValue)
 			if svErr != nil {
 				return fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
 			}
@@ -233,43 +233,61 @@ func execMethod(callMethod reflect.Value, selTag *parseTag, node *goquery.Select
 	return callReturns[0].Interface(), nil
 }
 
-func setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v interface{}) (err error) {
+func (p Pagser) setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v interface{}) (err error) {
 	//set value
 	switch {
 	//Bool
 	case kind == reflect.Bool:
-		kv, err := cast.ToBoolE(v)
-		if err != nil {
-			return err
+		if p.Config.CastError {
+			kv, err := cast.ToBoolE(v)
+			if err != nil {
+				return err
+			}
+			fieldValue.SetBool(kv)
+		} else {
+			fieldValue.SetBool(cast.ToBool(v))
 		}
-		fieldValue.SetBool(kv)
 	case kind >= reflect.Int && kind <= reflect.Int64:
-		kv, err := cast.ToInt64E(v)
-		if err != nil {
-			return err
+		if p.Config.CastError {
+			kv, err := cast.ToInt64E(v)
+			if err != nil {
+				return err
+			}
+			fieldValue.SetInt(kv)
+		} else {
+			fieldValue.SetInt(cast.ToInt64(v))
 		}
-		fieldValue.SetInt(kv)
 	case kind >= reflect.Uint && kind <= reflect.Uintptr:
-		kv, err := cast.ToUint64E(v)
-		if err != nil {
-			return err
+		if p.Config.CastError {
+			kv, err := cast.ToUint64E(v)
+			if err != nil {
+				return err
+			}
+			fieldValue.SetUint(kv)
+		} else {
+			fieldValue.SetUint(cast.ToUint64(v))
 		}
-		fieldValue.SetUint(kv)
-		//Float32
-		//Float64
 	case kind == reflect.Float32 || kind == reflect.Float64:
-		value, err := cast.ToFloat64E(v)
-		if err != nil {
-			return err
+		if p.Config.CastError {
+			value, err := cast.ToFloat64E(v)
+			if err != nil {
+				return err
+			}
+			fieldValue.SetFloat(value)
+		} else {
+			fieldValue.SetFloat(cast.ToFloat64(v))
 		}
-		fieldValue.SetFloat(value)
 		//Interface
 	case kind == reflect.String:
-		kv, err := cast.ToStringE(v)
-		if err != nil {
-			return err
+		if p.Config.CastError {
+			kv, err := cast.ToStringE(v)
+			if err != nil {
+				return err
+			}
+			fieldValue.SetString(kv)
+		} else {
+			fieldValue.SetString(cast.ToString(v))
 		}
-		fieldValue.SetString(kv)
 	//case kind == reflect.Interface:
 	//	fieldValue.Set(reflect.ValueOf(v))
 	default:

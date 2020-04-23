@@ -12,7 +12,7 @@ import "errors"
 
 // Pagser the page parser
 type Pagser struct {
-	config   Config
+	Config   Config
 	ctxTags  map[string]*parseTag // tag value => parseTag
 	ctxFuncs map[string]CallFunc  // name => func
 }
@@ -23,7 +23,7 @@ func New() *Pagser {
 	return p
 }
 
-// NewWithConfig create client with config and error
+// NewWithConfig create client with Config and error
 func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.TagerName == "" {
 		return nil, errors.New("TagerName must not empty")
@@ -32,13 +32,13 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 		return nil, errors.New("FuncSymbol must not empty")
 	}
 	return &Pagser{
-		config:   cfg,
+		Config:   cfg,
 		ctxTags:  make(map[string]*parseTag, 0),
 		ctxFuncs: builtinFuncMap,
 	}, nil
 }
 
-// DefaultConfig the default config
+// DefaultConfig the default Config
 func DefaultConfig() Config {
 	return defaultCfg
 }

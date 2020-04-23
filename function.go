@@ -138,7 +138,11 @@ func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (o
 		return "", fmt.Errorf("attr(xxx) must has name")
 	}
 	name := args[0]
-	val, _ := node.Attr(name)
+	defaultValue := ""
+	if len(args) > 1 {
+		defaultValue = args[1]
+	}
+	val := node.AttrOr(name, defaultValue)
 	return val, nil
 }
 

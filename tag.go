@@ -27,7 +27,7 @@ func (p *Pagser) newTag(tagValue string) *parseTag {
 	if tagValue == "" {
 		return cssParser
 	}
-	selectors := strings.Split(tagValue, p.config.FuncSymbol)
+	selectors := strings.Split(tagValue, p.Config.FuncSymbol)
 	funcValue := ""
 	for i := 0; i < len(selectors); i++ {
 		switch i {
@@ -44,7 +44,7 @@ func (p *Pagser) newTag(tagValue string) *parseTag {
 	cssParser.FuncName = strings.TrimSpace(matches[1])
 	//cssParser.FuncParams = strings.Split(matches[2], ",")
 	cssParser.FuncParams = parseFuncParams(matches[3])
-	if p.config.Debug {
+	if p.Config.Debug {
 		fmt.Printf("----- debug -----\n`%v`\n%v\n", tagValue, prettyJson(cssParser))
 	}
 	return cssParser

@@ -32,8 +32,8 @@ type PageData struct {
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li:last-child"`
-	NavFirstID             int            `pagser:".navlink li:first-child->attrInt(id)"`
-	NavLastID              uint           `pagser:".navlink li:last-child->attrInt(id)"`
+	NavFirstID             int            `pagser:".navlink li:first-child->attrInt(id, 0)"`
+	NavLastID              uint           `pagser:".navlink li:last-child->attr(id)"`
 	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrInt(id, -999)"`
 	NavTextList            []string       `pagser:".navlink li"`
 	NavEachText            []string       `pagser:".navlink li->eachText()"`
@@ -129,6 +129,7 @@ const rawPpageHtml = `
 
 func TestParse(t *testing.T) {
 	cfg := DefaultConfig()
+	cfg.CastError = true
 	cfg.Debug = true
 	p, err := NewWithConfig(cfg)
 	if err != nil {
