@@ -13,6 +13,7 @@ type PageData struct {
 	Keywords            []string `pagser:"meta[name='keywords']->attrSplit(content)"`
 	H1                  string   `pagser:"h1"`
 	H1Text              string   `pagser:"h1->text()"`
+	H1TextEmpty         string   `pagser:"h1->text('')"`
 	H1Html              string   `pagser:"h1->html()"`
 	H1OutHtml           string   `pagser:"h1->outerHtml()"`
 	MyGlobalFuncValue   string   `pagser:"h1->MyGlobFunc()"`
@@ -38,7 +39,9 @@ type PageData struct {
 	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrEmpty(id, -999)"`
 	NavTextList            []string       `pagser:".navlink li"`
 	NavEachText            []string       `pagser:".navlink li->eachText()"`
+	NavEachTextEmpty       []string       `pagser:".navlink li->eachTextEmpty('')"`
 	NavEachAttrID          []string       `pagser:".navlink li->eachAttr(id)"`
+	NavEachAttrEmptyID     []string       `pagser:".navlink li->eachAttrEmpty(id, -1)"`
 	NavEachHtml            []string       `pagser:".navlink li->eachHtml()"`
 	NavEachOutHtml         []string       `pagser:".navlink li->eachOutHtml()"`
 	NavJoinString          string         `pagser:".navlink li->eachJoin(|)"`
