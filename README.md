@@ -198,8 +198,6 @@ type ExamData struct {
 
 > - eachAttr() get each element attribute value, return []string.
 
-> - attrEmpty(name, defaultValue) get element attribute value and to int, return int.
-
 > - attrSplit(name, sep)  get attribute value and split by separator to array string.
 
 > - value() get element attribute value by name is `value`, return string, eg: <input value='xxxx' /> will return "xxx".
