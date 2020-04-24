@@ -2,9 +2,10 @@ package pagser
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"strconv"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // CallFunc write function interface
@@ -272,7 +273,7 @@ func (builtin BuiltinFunctions) Eq(node *goquery.Selection, args ...string) (out
 	if err != nil {
 		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
 	}
-	return node.Eq(idx).Text(), nil
+	return strings.TrimSpace(node.Eq(idx).Text()), nil
 }
 
 // eqAndAttr(index, name) reduces the set of matched elements to the one at the specified index, and attr() return string.

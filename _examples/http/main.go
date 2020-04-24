@@ -8,17 +8,16 @@ import (
 )
 
 type PageData struct {
-	Title string `pagser:"title"`
-	H1    string `pagser:"h1"`
-	Navs  []struct {
-		ID   int    `pagser:"->attrEmpty(id, -1)"`
-		Name string `pagser:"a"`
-		Url  string `pagser:"a->attr(href)"`
-	} `pagser:".navlink li"`
+	Title    string `pagser:"title"`
+	RepoList []struct {
+		Name        string `pagser:"h1"`
+		Description string `pagser:"h1 + p"`
+		Stars       string `pagser:"a.muted-link->eq(0)"`
+	} `pagser:"article.Box-row"`
 }
 
 func main() {
-	resp, err := http.Get("https://raw.githubusercontent.com/foolin/pagser/master/_examples/pages/demo.html")
+	resp, err := http.Get("https://github.com/trending")
 	if err != nil {
 		log.Fatal(err)
 	}

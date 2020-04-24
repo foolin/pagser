@@ -2,10 +2,11 @@ package pagser
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 type PageData struct {
@@ -54,17 +55,26 @@ type PageData struct {
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
 	WordsSplitArray        []string       `pagser:".words->split(|)"`
 	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
-	//Email                  string         `pagser:"input[name='email']->value()"`
-	//Emails                 []string       `pagser:"input[name='email']->attrEmpty(email, '')"`
-	//CastBoolValue          bool           `pagser:"input[name='bool']->attrEmpty(bool, false)"`
-	//CastBoolNoExist        bool           `pagser:"input[name='bool']->attrEmpty(bool2, false)"`
-	//CastBoolArray          []bool         `pagser:"input[name='bool']->eachAttrEmpty(bool, false)"`
-	//CastIntValue           int            `pagser:"input[name='number']->attrEmpty(number, 0)"`
-	//CastIntNoExist         int            `pagser:"input[name='number']->attrEmpty(number1, -1)"`
-	//CastIntArray           []int          `pagser:"input[name='number']->eachAttrEmpty(number, 0)"`
-	//CastFloatValue         float64        `pagser:"input[name='float']->attrEmpty(float, 0)"`
-	//CastFloatNoExist       float64        `pagser:"input[name='float']->attrEmpty(float2, 0.0)"`
-	//CastFloatArray         []float64      `pagser:"input[name='float']->eachAttrEmpty(float, 0)"`
+	Email                  string         `pagser:"input[name='email']->value()"`
+	Emails                 []string       `pagser:"input[name='email']->eachAttrEmpty(value, '')"`
+	CastBoolValue          bool           `pagser:"input[name='bool']->attrEmpty(value, false)"`
+	CastBoolNoExist        bool           `pagser:"input[name='bool']->attrEmpty(value2, false)"`
+	CastBoolArray          []bool         `pagser:"input[name='bool']->eachAttrEmpty(value, false)"`
+	CastIntValue           int            `pagser:"input[name='number']->attrEmpty(value, 0)"`
+	CastIntNoExist         int            `pagser:"input[name='number']->attrEmpty(value2, -1)"`
+	CastIntArray           []int          `pagser:"input[name='number']->eachAttrEmpty(value, 0)"`
+	CastInt32Value         int32          `pagser:"input[name='number']->attrEmpty(value, 0)"`
+	CastInt32NoExist       int32          `pagser:"input[name='number']->attrEmpty(value2, -1)"`
+	CastInt32Array         []int32        `pagser:"input[name='number']->eachAttrEmpty(value, 0)"`
+	CastInt64Value         int64          `pagser:"input[name='number']->attrEmpty(value, 0)"`
+	CastInt64NoExist       int64          `pagser:"input[name='number']->attrEmpty(value2, -1)"`
+	CastInt64Array         []int64        `pagser:"input[name='number']->eachAttrEmpty(value, 0)"`
+	CastFloat32Value       float32        `pagser:"input[name='float']->attrEmpty(value, 0)"`
+	CastFloat32NoExist     float32        `pagser:"input[name='float']->attrEmpty(value2, 0.0)"`
+	CastFloat32Array       []float32      `pagser:"input[name='float']->eachAttrEmpty(value, 0)"`
+	CastFloat64Value       float64        `pagser:"input[name='float']->attrEmpty(value, 0)"`
+	CastFloat64NoExist     float64        `pagser:"input[name='float']->attrEmpty(value2, 0.0)"`
+	CastFloat64Array       []float64      `pagser:"input[name='float']->eachAttrEmpty(value, 0)"`
 }
 
 // this method will auto call, not need register.

@@ -2,11 +2,12 @@ package pagser
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/spf13/cast"
 	"io"
 	"reflect"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/spf13/cast"
 )
 
 // Parse parse html to struct
@@ -287,56 +288,83 @@ func (p Pagser) setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v in
 		} else {
 			fieldValue.SetString(cast.ToString(v))
 		}
-	//case kind == reflect.Slice || kind == reflect.Array:
-	//	sliceType := fieldValue.Type().Elem()
-	//	itemKind := sliceType.Kind()
-	//	if p.Config.CastError {
-	//		switch {
-	//		case itemKind == reflect.Bool:
-	//			kv, err := cast.ToBoolSliceE(v)
-	//			if err != nil {
-	//				return err
-	//			}
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		case itemKind >= reflect.Int:
-	//			kv, err := cast.ToIntSliceE(v)
-	//			if err != nil {
-	//				return err
-	//			}
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		case itemKind == reflect.Float64:
-	//			kv, err := cast.ToFloat64E(v)
-	//			if err != nil {
-	//				return err
-	//			}
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		case itemKind == reflect.String:
-	//			kv, err := cast.ToStringSliceE(v)
-	//			if err != nil {
-	//				return err
-	//			}
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		default:
-	//			fieldValue.Set(reflect.ValueOf(v))
-	//		}
-	//	} else {
-	//		switch {
-	//		case itemKind == reflect.Bool:
-	//			kv := cast.ToBoolSlice(v)
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		case itemKind >= reflect.Int:
-	//			kv := cast.ToIntSlice(v)
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		case itemKind == reflect.Float64:
-	//			kv := cast.ToFloat64(v)
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		case itemKind == reflect.String:
-	//			kv := cast.ToStringSlice(v)
-	//			fieldValue.Set(reflect.ValueOf(kv))
-	//		default:
-	//			fieldValue.Set(reflect.ValueOf(v))
-	//		}
-	//	}
+	case kind == reflect.Slice || kind == reflect.Array:
+		sliceType := fieldValue.Type().Elem()
+		itemKind := sliceType.Kind()
+		if p.Config.CastError {
+			switch itemKind {
+			case reflect.Bool:
+				kv, err := cast.ToBoolSliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Int:
+				kv, err := cast.ToIntSliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Int32:
+				kv, err := toInt32SliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Int64:
+				kv, err := toInt64SliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Float32:
+				kv, err := toFloat32SliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Float64:
+				kv, err := toFloat64SliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.String:
+				kv, err := cast.ToStringSliceE(v)
+				if err != nil {
+					return err
+				}
+				fieldValue.Set(reflect.ValueOf(kv))
+			default:
+				fieldValue.Set(reflect.ValueOf(v))
+			}
+		} else {
+			switch itemKind {
+			case reflect.Bool:
+				kv := cast.ToBoolSlice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Int:
+				kv := cast.ToIntSlice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Int32:
+				kv := toInt32Slice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Int64:
+				kv := toInt64Slice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Float32:
+				kv := toFloat32Slice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.Float64:
+				kv := toFloat64Slice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			case reflect.String:
+				kv := cast.ToStringSlice(v)
+				fieldValue.Set(reflect.ValueOf(kv))
+			default:
+				fieldValue.Set(reflect.ValueOf(v))
+			}
+		}
 	//case kind == reflect.Interface:
 	//	fieldValue.Set(reflect.ValueOf(v))
 	default:

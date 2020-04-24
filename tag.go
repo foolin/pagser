@@ -11,7 +11,8 @@ import (
 //->text()
 //->value()
 //->html()
-//->attr(xxx)
+//->attr(xxx, '')
+//->attr('', '')
 var rxFunc = regexp.MustCompile("^\\s*([a-zA-Z]+)\\s*(\\(([^\\)]*)\\))?\\s*$")
 
 // parseTag struct tag info

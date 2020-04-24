@@ -40,7 +40,7 @@ type PageData struct {
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
-	NavIds        []string `pagser:".navlink li->eachAttr(id, -1)"`
+	NavIds        []int    `pagser:".navlink li->eachAttrEmpty(id, -1)"`
 	NavTexts      []string `pagser:".navlink li"`
 	NavEachTexts  []string `pagser:".navlink li->eachText()"`
 	MyFuncValue   string   `pagser:"h1->MyFunc()"`
