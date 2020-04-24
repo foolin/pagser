@@ -316,6 +316,17 @@ func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...st
 	return goquery.OuterHtml(node.Eq(idx))
 }
 
+// concat(text1, $value, [ text2, ... text_n ])
+// text1, text2, ... text_n The strings that you wish to join together,
+// `$value` is placeholder for get element  text
+// return string.
+func (builtin BuiltinFunctions) oncat(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 2 {
+		return "", fmt.Errorf("eq(index) must be more than two arguments")
+	}
+	return "", nil
+}
+
 // RegisterFunc register function for parse
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) error {
 	p.ctxFuncs[name] = fn
