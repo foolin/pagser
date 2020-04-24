@@ -55,6 +55,8 @@ type PageData struct {
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
 	WordsSplitArray        []string       `pagser:".words->split(|)"`
 	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
+	WordsConcat            string         `pagser:".words->concat('this is words:', [, $value, ])"`
+	WordsConcatAttr        string         `pagser:".words->concatAttr(show, 'isShow = [', $value, ])"`
 	Email                  string         `pagser:"input[name='email']->value()"`
 	Emails                 []string       `pagser:"input[name='email']->eachAttrEmpty(value, '')"`
 	CastBoolValue          bool           `pagser:"input[name='bool']->attrEmpty(value, false)"`

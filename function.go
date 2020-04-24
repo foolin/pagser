@@ -68,6 +68,8 @@ var builtinFuncMap = map[string]CallFunc{
 	"eqAndAttr":     builtinFuncObj.EqAndAttr,
 	"eqAndHtml":     builtinFuncObj.EqAndHtml,
 	"eqAndOutHtml":  builtinFuncObj.EqAndOutHtml,
+	"concat":        builtinFuncObj.Concat,
+	"concatAttr":    builtinFuncObj.ConcatAttr,
 }
 
 // text() get element  text, return string, this is default function, if not define function in struct tag.
@@ -317,14 +319,48 @@ func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...st
 }
 
 // concat(text1, $value, [ text2, ... text_n ])
-// text1, text2, ... text_n The strings that you wish to join together,
+// `text1, text2, ... text_n` The strings that you wish to join together,
 // `$value` is placeholder for get element  text
 // return string.
-func (builtin BuiltinFunctions) oncat(node *goquery.Selection, args ...string) (out interface{}, err error) {
+func (builtin BuiltinFunctions) Concat(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("eq(index) must be more than two arguments")
+		return "", fmt.Errorf("concat(text1, $value, [ text2, ... text_n ]) must be more than two arguments")
 	}
-	return "", nil
+	value := strings.TrimSpace(node.Text())
+	builder := strings.Builder{}
+	for _, v := range args {
+		if v == "$value" {
+			builder.WriteString(value)
+		} else {
+			builder.WriteString(v)
+		}
+	}
+	return builder.String(), nil
+}
+
+// concatAttr(name, text1, $value, [ text2, ... text_n ])
+// `name` get element attribute value by name,
+// `text1, text2, ... text_n` The strings that you wish to join together,
+// `$value` is placeholder for get element  text
+// return string.
+func (builtin BuiltinFunctions) ConcatAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 3 {
+		return "", fmt.Errorf("concatAttr(name, text1, $value, [ text2, ... text_n ]) must be more than two arguments")
+	}
+	name := args[0]
+	value := strings.TrimSpace(node.AttrOr(name, ""))
+	builder := strings.Builder{}
+	for i, v := range args {
+		if i == 0 {
+			continue
+		}
+		if v == "$value" {
+			builder.WriteString(value)
+		} else {
+			builder.WriteString(v)
+		}
+	}
+	return builder.String(), nil
 }
 
 // RegisterFunc register function for parse
