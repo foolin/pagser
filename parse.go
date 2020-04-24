@@ -277,7 +277,6 @@ func (p Pagser) setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v in
 		} else {
 			fieldValue.SetFloat(cast.ToFloat64(v))
 		}
-		//Interface
 	case kind == reflect.String:
 		if p.Config.CastError {
 			kv, err := cast.ToStringE(v)
@@ -288,6 +287,56 @@ func (p Pagser) setRefectValue(kind reflect.Kind, fieldValue reflect.Value, v in
 		} else {
 			fieldValue.SetString(cast.ToString(v))
 		}
+	//case kind == reflect.Slice || kind == reflect.Array:
+	//	sliceType := fieldValue.Type().Elem()
+	//	itemKind := sliceType.Kind()
+	//	if p.Config.CastError {
+	//		switch {
+	//		case itemKind == reflect.Bool:
+	//			kv, err := cast.ToBoolSliceE(v)
+	//			if err != nil {
+	//				return err
+	//			}
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		case itemKind >= reflect.Int:
+	//			kv, err := cast.ToIntSliceE(v)
+	//			if err != nil {
+	//				return err
+	//			}
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		case itemKind == reflect.Float64:
+	//			kv, err := cast.ToFloat64E(v)
+	//			if err != nil {
+	//				return err
+	//			}
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		case itemKind == reflect.String:
+	//			kv, err := cast.ToStringSliceE(v)
+	//			if err != nil {
+	//				return err
+	//			}
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		default:
+	//			fieldValue.Set(reflect.ValueOf(v))
+	//		}
+	//	} else {
+	//		switch {
+	//		case itemKind == reflect.Bool:
+	//			kv := cast.ToBoolSlice(v)
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		case itemKind >= reflect.Int:
+	//			kv := cast.ToIntSlice(v)
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		case itemKind == reflect.Float64:
+	//			kv := cast.ToFloat64(v)
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		case itemKind == reflect.String:
+	//			kv := cast.ToStringSlice(v)
+	//			fieldValue.Set(reflect.ValueOf(kv))
+	//		default:
+	//			fieldValue.Set(reflect.ValueOf(v))
+	//		}
+	//	}
 	//case kind == reflect.Interface:
 	//	fieldValue.Set(reflect.ValueOf(v))
 	default:

@@ -13,9 +13,10 @@ type PageData struct {
 	Keywords            []string `pagser:"meta[name='keywords']->attrSplit(content)"`
 	H1                  string   `pagser:"h1"`
 	H1Text              string   `pagser:"h1->text()"`
-	H1TextEmpty         string   `pagser:"h1->text('')"`
+	H1TextEmpty         string   `pagser:"h1->textEmpty('')"`
 	H1Html              string   `pagser:"h1->html()"`
 	H1OutHtml           string   `pagser:"h1->outerHtml()"`
+	SameFuncValue       string   `pagser:"h1->SameFunc()"`
 	MyGlobalFuncValue   string   `pagser:"h1->MyGlobFunc()"`
 	MyStructFuncValue   string   `pagser:"h1->MyStructFunc()"`
 	FillFieldFuncValue  string   `pagser:"h1->FillFieldFunc()"`
@@ -49,13 +50,21 @@ type PageData struct {
 	NavEqAttr              string         `pagser:".navlink li->eqAndAttr(1, id)"`
 	NavEqHtml              string         `pagser:".navlink li->eqAndHtml(1)"`
 	NavEqOutHtml           string         `pagser:".navlink li->eqAndOutHtml(1)"`
-	WordsSplitArray        []string       `pagser:".words->split(|)"`
-	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
-	Value                  string         `pagser:"input[name='feedback']->value()"`
-	InputAttrEmptyBool     bool           `pagser:"input[name='feedback']->attrEmpty(no, false)"`
-	SameFuncValue          string         `pagser:"h1->SameFunc()"`
 	SubPageData            *SubPageData   `pagser:".navlink li:last-child"`
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
+	WordsSplitArray        []string       `pagser:".words->split(|)"`
+	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
+	//Email                  string         `pagser:"input[name='email']->value()"`
+	//Emails                 []string       `pagser:"input[name='email']->attrEmpty(email, '')"`
+	//CastBoolValue          bool           `pagser:"input[name='bool']->attrEmpty(bool, false)"`
+	//CastBoolNoExist        bool           `pagser:"input[name='bool']->attrEmpty(bool2, false)"`
+	//CastBoolArray          []bool         `pagser:"input[name='bool']->eachAttrEmpty(bool, false)"`
+	//CastIntValue           int            `pagser:"input[name='number']->attrEmpty(number, 0)"`
+	//CastIntNoExist         int            `pagser:"input[name='number']->attrEmpty(number1, -1)"`
+	//CastIntArray           []int          `pagser:"input[name='number']->eachAttrEmpty(number, 0)"`
+	//CastFloatValue         float64        `pagser:"input[name='float']->attrEmpty(float, 0)"`
+	//CastFloatNoExist       float64        `pagser:"input[name='float']->attrEmpty(float2, 0.0)"`
+	//CastFloatArray         []float64      `pagser:"input[name='float']->eachAttrEmpty(float, 0)"`
 }
 
 // this method will auto call, not need register.
@@ -125,7 +134,15 @@ const rawPpageHtml = `
 		</div>
 	</div>
 	<div class='words' show="true">A|B|C|D</div>
-	<input name="feedback" value="pagser@foolin.github" /> 
+	
+	<input name="email" value="pagser@foolin.github" />
+	<input name="email" value="hello@pagser.foolin" />
+	<input name="bool" value="true" /> 
+	<input name="bool" value="false" /> 
+	<input name="number" value="12345" />
+	<input name="number" value="67890" />
+	<input name="float" value="123.45" /> 
+	<input name="float" value="678.90" />
 </body>
 </html>
 `
