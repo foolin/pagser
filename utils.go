@@ -1,6 +1,7 @@
 package pagser
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 
@@ -145,4 +146,9 @@ func toFloat64SliceE(i interface{}) ([]float64, error) {
 	default:
 		return []float64{}, fmt.Errorf("unable to cast %#v of type %T to []float64", i, i)
 	}
+}
+
+func prettyJson(v interface{}) string {
+	bytes, _ := json.MarshalIndent(v, "", "\t")
+	return string(bytes)
 }

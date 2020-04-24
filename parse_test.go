@@ -175,7 +175,7 @@ func TestParse(t *testing.T) {
 
 func TestPagser_ParseDocument(t *testing.T) {
 	cfg := Config{
-		TagerName:  "pagser",
+		TagName:    "pagser",
 		FuncSymbol: "->",
 		CastError:  true,
 		Debug:      true,

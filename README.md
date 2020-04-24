@@ -148,7 +148,7 @@ Page data json:
 ```golang
 
 type Config struct {
-	TagerName    string //struct tag name, default is `pagser`
+	TagName    string //struct tag name, default is `pagser`
 	FuncSymbol   string //Function symbol, default is `->`
 	Debug        bool   //Debug mode, debug will print some log, default is `false`
 }
@@ -302,6 +302,31 @@ func main(){
 
 > struct method -> parent method -> ... -> global
 
+**Function call syntax**
+
+> **Note**: all function arguments are string, single quotes are optional.
+
+1. Function call with no arguments
+> ->fn()
+
+2. Function calls with one argument, and single quotes are optional
+
+> ->fn(one)
+>
+> ->fn('one')
+
+3. Function calls with many arguments
+
+> ->fn(one, two, three, ...)
+>
+> ->fn('one', 'two', 'three', ...)
+
+
+5. Function calls with single quotes and escape character
+
+> ->fn('it\'s ok', 'two,xxx', 'three', ...)
+
+*More info:*
 See advance example: <https://github.com/foolin/pagser/tree/master/_examples/advance>
 
 # Colly Example

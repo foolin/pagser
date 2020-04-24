@@ -60,11 +60,11 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 		kind := fieldType.Type.Kind()
 
 		//tagValue := fieldType.Tag.Get(parserTagName)
-		tagValue, tagOk := fieldType.Tag.Lookup(p.Config.TagerName)
+		tagValue, tagOk := fieldType.Tag.Lookup(p.Config.TagName)
 		if !tagOk {
 			if p.Config.Debug {
 				fmt.Printf("[WARN] not found tag name=[%v] in field: %v, eg: `%v:\".navlink a->attr(href)\"`\n",
-					p.Config.TagerName, fieldType.Name, p.Config.TagerName)
+					p.Config.TagName, fieldType.Name, p.Config.TagName)
 			}
 			continue
 		}
@@ -74,7 +74,10 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 
 		tag, ok := p.ctxTags[tagValue]
 		if !ok || tag == nil {
-			tag = p.newTag(tagValue)
+			tag, err = p.newTag(tagValue)
+			if err != nil {
+				return err
+			}
 			p.ctxTags[tagValue] = tag
 		}
 
@@ -170,7 +173,7 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 fieldType := refTypeElem.Field(i)
 fieldValue := refValueElem.Field(i)
 */
-func (p *Pagser) findAndExecFunc(objRefValue reflect.Value, stackRefValues []reflect.Value, selTag *parseTag, node *goquery.Selection) (interface{}, error) {
+func (p *Pagser) findAndExecFunc(objRefValue reflect.Value, stackRefValues []reflect.Value, selTag *tagTokenizer, node *goquery.Selection) (interface{}, error) {
 	if selTag.FuncName != "" {
 
 		//call object method
@@ -216,7 +219,7 @@ func findMethod(objRefValue reflect.Value, funcName string) reflect.Value {
 	return objRefValue.Elem().MethodByName(funcName)
 }
 
-func execMethod(callMethod reflect.Value, selTag *parseTag, node *goquery.Selection) (interface{}, error) {
+func execMethod(callMethod reflect.Value, selTag *tagTokenizer, node *goquery.Selection) (interface{}, error) {
 	callParams := make([]reflect.Value, 0)
 	callParams = append(callParams, reflect.ValueOf(node))
 

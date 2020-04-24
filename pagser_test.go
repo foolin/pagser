@@ -62,7 +62,7 @@ func TestNew(t *testing.T) {
 
 func TestNewWithConfig(t *testing.T) {
 	cfg := Config{
-		TagerName:  "query",
+		TagName:    "query",
 		FuncSymbol: "@",
 		CastError:  true,
 		Debug:      true,

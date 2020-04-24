@@ -61,7 +61,7 @@ func MyGlobalFunc(node *goquery.Selection, args ...string) (out interface{}, err
 func main() {
 	//New with config
 	cfg := pagser.Config{
-		TagerName:  "pagser",
+		TagName:    "pagser",
 		FuncSymbol: "->",
 		CastError:  true,
 		Debug:      true,

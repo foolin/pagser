@@ -79,7 +79,7 @@ func ExamplePagser_ParseReader() {
 
 func ExampleNewWithConfig() {
 	cfg := Config{
-		TagerName:  "pagser",
+		TagName:    "pagser",
 		FuncSymbol: "->",
 		CastError:  false,
 		Debug:      false,
