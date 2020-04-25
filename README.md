@@ -342,7 +342,7 @@ func main(){
 
 5. Function calls with single quotes and escape character
 
-> ->fn('it\'s ok', 'two,xxx', 'three', ...)
+> ->fn('it\\'s ok', 'two,xxx', 'three', ...)
 
 
 ### Priority Order
