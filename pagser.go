@@ -17,13 +17,13 @@ type Pagser struct {
 	ctxFuncs map[string]CallFunc      // name => func
 }
 
-// New create client
+// New create pagser client
 func New() *Pagser {
 	p, _ := NewWithConfig(DefaultConfig())
 	return p
 }
 
-// NewWithConfig create client with Config and error
+// NewWithConfig create pagser client with Config and error
 func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.TagName == "" {
 		return nil, errors.New("tag name must not empty")
@@ -36,9 +36,4 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 		ctxTags:  make(map[string]*tagTokenizer, 0),
 		ctxFuncs: builtinFuncMap,
 	}, nil
-}
-
-// DefaultConfig the default Config
-func DefaultConfig() Config {
-	return defaultCfg
 }

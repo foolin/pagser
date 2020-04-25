@@ -4,6 +4,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
+	"strings"
 )
 
 const rawExampleHtml = `
@@ -51,42 +52,6 @@ type ExamplePage struct {
 	} `pagser:".navlink li"`
 }
 
-func ExamplePagser_Parse() {
-	//New default Config
-	p := New()
-	//data parser model
-	var page ExamplePage
-	//parse html data
-	err := p.Parse(&page, rawExampleHtml)
-	//check error
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("%v", page)
-}
-
-func ExamplePagser_ParseReader() {
-	resp, err := http.Get("https://raw.githubusercontent.com/foolin/pagser/master/_examples/pages/demo.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-
-	//New default Config
-	p := New()
-	//data parser model
-	var page ExamplePage
-	//parse html data
-	err = p.ParseReader(&page, resp.Body)
-	//check error
-	if err != nil {
-		panic(err)
-	}
-
-	log.Printf("%v", page)
-}
-
 func ExampleNewWithConfig() {
 	cfg := Config{
 		TagName:    "pagser",
@@ -110,11 +75,93 @@ func ExampleNewWithConfig() {
 
 }
 
-func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	//todo
-	return "Hello", nil
+func ExamplePagser_Parse() {
+	//New default Config
+	p := New()
+
+	//data parser model
+	var page ExamplePage
+	//parse html data
+	err := p.Parse(&page, rawExampleHtml)
+	//check error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//print result
+	log.Printf("%v", page)
 }
+
+func ExamplePagser_ParseDocument() {
+	//New default Config
+	p := New()
+
+	//data parser model
+	var data ExamplePage
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawExampleHtml))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//parse document
+	err = p.ParseDocument(&data, doc)
+	//check error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//print result
+	log.Printf("%v", data)
+}
+
+func ExamplePagser_ParseSelection() {
+	//New default Config
+	p := New()
+
+	//data parser model
+	var data ExamplePage
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawExampleHtml))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//parse document
+	err = p.ParseSelection(&data, doc.Selection)
+	//check error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//print result
+	log.Printf("%v", data)
+}
+
+func ExamplePagser_ParseReader() {
+	resp, err := http.Get("https://raw.githubusercontent.com/foolin/pagser/master/_examples/pages/demo.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	//New default Config
+	p := New()
+	//data parser model
+	var page ExamplePage
+	//parse html data
+	err = p.ParseReader(&page, resp.Body)
+	//check error
+	if err != nil {
+		panic(err)
+	}
+
+	log.Printf("%v", page)
+}
+
 func ExamplePagser_RegisterFunc() {
 	p := New()
-	p.RegisterFunc("MyFunc", MyFunc)
+
+	p.RegisterFunc("MyFunc", func(node *goquery.Selection, args ...string) (out interface{}, err error) {
+		//Todo
+		return "Hello", nil
+	})
 }

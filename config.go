@@ -16,3 +16,14 @@ var defaultCfg = Config{
 	CastError:  false,
 	Debug:      false,
 }
+
+// DefaultConfig the default Config
+//	Config{
+//		TagName:    "pagser",
+//		FuncSymbol: "->",
+//		CastError:  false,
+//		Debug:      false,
+//	}
+func DefaultConfig() Config {
+	return defaultCfg
+}

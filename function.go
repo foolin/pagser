@@ -37,9 +37,12 @@ import (
 //		return "Hello", nil
 //	}
 //
+// # Lookup function priority order
+//
+//	struct method -> parent method -> ... -> global
 //
 //
-// Define your own function interface
+// CallFunc is a define function interface
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 // Builtin functions are registered with a lowercase initial, eg: Text -> text()
@@ -72,12 +75,18 @@ var builtinFuncMap = map[string]CallFunc{
 	"concatAttr":    builtinFuncObj.ConcatAttr,
 }
 
-// text() get element  text, return string, this is default function, if not define function in struct tag.
+//text() get element  text, return string, this is default function, if not define function in struct tag.
+//	struct {
+//		Example string `pagser:".selector->text()"`
+//	}
 func (builtin BuiltinFunctions) Text(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return strings.TrimSpace(node.Text()), nil
 }
 
 // textEmpty(defaultValue) get element text, if empty will return defaultValue, return string.
+//	struct {
+//		Example string `pagser:".selector->TextEmpty('')"`
+//	}
 func (builtin BuiltinFunctions) TextEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("textEmpty(defaultValue) must has defaultValue")
@@ -91,6 +100,9 @@ func (builtin BuiltinFunctions) TextEmpty(node *goquery.Selection, args ...strin
 }
 
 // eachText() get each element text, return []string.
+//	struct {
+//		Examples []string `pagser:".selector->eachText('')"`
+//	}
 func (builtin BuiltinFunctions) EachText(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.Each(func(i int, selection *goquery.Selection) {
@@ -100,6 +112,9 @@ func (builtin BuiltinFunctions) EachText(node *goquery.Selection, args ...string
 }
 
 // eachTextEmpty(defaultValue) get each element text, return []string.
+//	struct {
+//		Examples []string `pagser:".selector->eachTextEmpty('')"`
+//	}
 func (builtin BuiltinFunctions) EachTextEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("eachTextEmpty(defaultValue) must has defaultValue")
@@ -117,11 +132,18 @@ func (builtin BuiltinFunctions) EachTextEmpty(node *goquery.Selection, args ...s
 }
 
 // html() get element inner html, return string.
+//	struct {
+//		Example string `pagser:".selector->html()"`
+//	}
 func (builtin BuiltinFunctions) Html(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return node.Html()
 }
 
 // eachHtml() get each element inner html, return []string.
+// eachTextEmpty(defaultValue) get each element text, return []string.
+//	struct {
+//		Examples []string `pagser:".selector->eachHtml()"`
+//	}
 func (builtin BuiltinFunctions) EachHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.EachWithBreak(func(i int, selection *goquery.Selection) bool {
@@ -140,6 +162,9 @@ func (builtin BuiltinFunctions) EachHtml(node *goquery.Selection, args ...string
 }
 
 // outerHtml() get element  outer html, return string.
+//	struct {
+//		Example string `pagser:".selector->outerHtml()"`
+//	}
 func (builtin BuiltinFunctions) OutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	html, err := goquery.OuterHtml(node)
 	if err != nil {
@@ -149,6 +174,9 @@ func (builtin BuiltinFunctions) OutHtml(node *goquery.Selection, args ...string)
 }
 
 // eachOutHtml() get each element outer html, return []string.
+//	struct {
+//		Examples []string `pagser:".selector->eachOutHtml()"`
+//	}
 func (builtin BuiltinFunctions) EachOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	list := make([]string, 0)
 	node.EachWithBreak(func(i int, selection *goquery.Selection) bool {
@@ -167,6 +195,11 @@ func (builtin BuiltinFunctions) EachOutHtml(node *goquery.Selection, args ...str
 }
 
 // attr(name, defaultValue='') get element attribute value, return string.
+// outerHtml() get element  outer html, return string.
+//	//<a href="https://github.com/foolin/pagser">Pagser</a>
+//	struct {
+//		Example string `pagser:".selector->attr(href)"`
+//	}
 func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("attr(name) must has name")
@@ -181,6 +214,10 @@ func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (o
 }
 
 // attrEmpty(name, defaultValue) get element attribute value, return string.
+//	//<a href="https://github.com/foolin/pagser">Pagser</a>
+//	struct {
+//		Example string `pagser:".selector->AttrEmpty(href, '#')"`
+//	}
 func (builtin BuiltinFunctions) AttrEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("attr(name, defaultValue) must has name and default value")
@@ -195,6 +232,10 @@ func (builtin BuiltinFunctions) AttrEmpty(node *goquery.Selection, args ...strin
 }
 
 // eachAttr() get each element attribute value, return []string.
+//	//<a href="https://github.com/foolin/pagser">Pagser</a>
+//	struct {
+//		Examples []string `pagser:".selector->eachAttr(href)"`
+//	}
 func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("attr(name) must has name")
@@ -208,6 +249,10 @@ func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string
 }
 
 // eachAttrEmpty(defaultValue) get each element attribute value, return []string.
+//	//<a href="https://github.com/foolin/pagser">Pagser</a>
+//	struct {
+//		Examples []string `pagser:".selector->eachAttrEmpty(href, '#')"`
+//	}
 func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("attr(name) must has name")
@@ -225,7 +270,11 @@ func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...s
 	return list, nil
 }
 
-// attrSplit(name, sep)  get attribute value and split by separator to array string.
+// attrSplit(name, sep)  get attribute value and split by separator to array string, return []string.
+//	//<a href="https://github.com/foolin/pagser">Pagser</a>
+//	struct {
+//		Examples []string `pagser:".selector->attrSplit(keywords)"`
+//	}
 func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("attr(xxx) must has name")
@@ -239,11 +288,19 @@ func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...strin
 }
 
 // value() get element attribute value by name is `value`, return string
+//	//<input name="pagser" value="xxx" />
+//	struct {
+//		Example string `pagser:".selector->Value()"`
+//	}
+// Output: xxx
 func (builtin BuiltinFunctions) Value(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return node.AttrOr("value", ""), nil
 }
 
 // split(sep) get element text and split by separator to array string, return []string.
+//	struct {
+//		Examples []string `pagser:".selector->split()"`
+//	}
 func (builtin BuiltinFunctions) Split(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
@@ -253,6 +310,9 @@ func (builtin BuiltinFunctions) Split(node *goquery.Selection, args ...string) (
 }
 
 // eachJoin(sep) get each element text and join to string, return string.
+//	struct {
+//		Example string `pagser:".selector->eachJoin(',')"`
+//	}
 func (builtin BuiltinFunctions) EachJoin(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
 	if len(args) > 0 {
@@ -266,6 +326,9 @@ func (builtin BuiltinFunctions) EachJoin(node *goquery.Selection, args ...string
 }
 
 // eq(index) reduces the set of matched elements to the one at the specified index, return string.
+//	struct {
+//		Example string `pagser:".selector->eq(0)"`
+//	}
 func (builtin BuiltinFunctions) Eq(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("eq(index) must has index")
@@ -279,6 +342,9 @@ func (builtin BuiltinFunctions) Eq(node *goquery.Selection, args ...string) (out
 }
 
 // eqAndAttr(index, name) reduces the set of matched elements to the one at the specified index, and attr() return string.
+//	struct {
+//		Example string `pagser:".selector->eqAndAttr(0, href)"`
+//	}
 func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 1 {
 		return "", fmt.Errorf("eq(index) must has index and attr name")
@@ -293,6 +359,9 @@ func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...strin
 }
 
 // eqAndHtml(index) reduces the set of matched elements to the one at the specified index, and html() return string.
+//	struct {
+//		Example string `pagser:".selector->eqAndHtml(0)"`
+//	}
 func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("eq(index) must has index")
@@ -306,6 +375,9 @@ func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...strin
 }
 
 // eqAndOutHtml(index) reduces the set of matched elements to the one at the specified index, and outHtml() return string.
+//	struct {
+//		Example string `pagser:".selector->eqAndOutHtml(0)"`
+//	}
 func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
 		return "", fmt.Errorf("eq(index) must has index")
@@ -319,9 +391,11 @@ func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...st
 }
 
 // concat(text1, $value, [ text2, ... text_n ])
-// `text1, text2, ... text_n` The strings that you wish to join together,
-// `$value` is placeholder for get element  text
-// return string.
+// The `text1, text2, ... text_n` strings that you wish to join together,
+// `$value` is placeholder for get element  text, return string.
+//	struct {
+//		Example string `pagser:".selector->concat('Result:', '<', $value, '>')"`
+//	}
 func (builtin BuiltinFunctions) Concat(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("concat(text1, $value, [ text2, ... text_n ]) must be more than two arguments")
@@ -343,6 +417,9 @@ func (builtin BuiltinFunctions) Concat(node *goquery.Selection, args ...string) 
 // `text1, text2, ... text_n` The strings that you wish to join together,
 // `$value` is placeholder for get element  text
 // return string.
+//	struct {
+//		Example string `pagser:".selector->concatAttr('Result:', '<', $value, '>')"`
+//	}
 func (builtin BuiltinFunctions) ConcatAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 3 {
 		return "", fmt.Errorf("concatAttr(name, text1, $value, [ text2, ... text_n ]) must be more than two arguments")
@@ -363,7 +440,11 @@ func (builtin BuiltinFunctions) ConcatAttr(node *goquery.Selection, args ...stri
 	return builder.String(), nil
 }
 
-// RegisterFunc register function for parse
+// RegisterFunc register function for parse result
+//	pagser.RegisterFunc("MyFunc", func(node *goquery.Selection, args ...string) (out interface{}, err error) {
+//		//Todo
+//		return "Hello", nil
+//	})
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) {
 	p.ctxFuncs[name] = fn
 }
