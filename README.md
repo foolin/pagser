@@ -6,6 +6,33 @@
 
 **Pagser** is a simple, easy, extensible, configurable HTML parser to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags, It's parser library from [scrago](https://github.com/foolin/scrago).
 
+
+## Contents
+
+- [Install](#install)
+- [Features](#features)
+- [Docs](#docs)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Struct Tag Grammar](#struct-tag-grammar)
+- [Functions](#functions)
+    - [Builtin functions](#builtin-functions)
+    - [Extension functions](#extension-functions)
+    - [Custom function](#custom-function)
+    - [Function interface](#function-interface)
+    - [Call Syntax](#call-syntax)
+    - [Priority Order](#priority-order)
+    - [More Examples](#more-examples)
+- [Examples](#examples)
+- [Dependencies](#dependencies)
+
+
+## Install
+
+```bash
+go get -u github.com/foolin/pagser
+```
+
 ## Features
 
 * **Simple** - Use golang struct tag syntax.
@@ -17,18 +44,12 @@
 * **Implicit type conversion** - Automatic implicit type conversion, Output result string convert to int, int64, float64...
 * **GoQuery/Colly** - Support all [goquery](https://github.com/PuerkitoBio/goquery) project, such as [go-colly](https://github.com/gocolly/colly).
 
-## Install
-
-```bash
-go get -u github.com/foolin/pagser
-```
-
 ## Docs
 
 See [Pagser](https://pkg.go.dev/github.com/foolin/pagser)
 
 
-# Usage
+## Usage
 
 ```golang
 
@@ -144,7 +165,7 @@ Page data json:
 
 ```
 
-# Configuration
+## Configuration
 
 ```golang
 
@@ -158,7 +179,7 @@ type Config struct {
 
 
 
-# Struct tag grammar
+## Struct Tag Grammar
 
 ```
 [goquery selector]->[function]
@@ -179,9 +200,9 @@ type ExamData struct {
 
 ![grammar](grammar.png)
 
-# Functions
+## Functions
 
-#### Builtin functions
+### Builtin functions
 
 > - text() get element  text, return string, this is default function, if not define function in struct tag.
 
@@ -211,7 +232,7 @@ type ExamData struct {
 
 More builtin functions see docs: <https://pkg.go.dev/github.com/foolin/pagser>
 
-#### Extensions functions
+### Extension functions
 
 >- Markdown() //convert html to markdown format.
 
@@ -228,16 +249,16 @@ markdown.Register(p)
 
 ```
 
-#### Write my function
+### Custom function
 
-**Function interface**
+#### Function interface
 ```golang
 
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 ```
 
-**1. Write global function:**
+#### Define global function
 ```golang
 
 //global function need call pagser.RegisterFunc("MyGlob", MyGlobalFunc) before use it.
@@ -270,7 +291,7 @@ func main(){
 ```
 
 
-**2. Write struct function:**
+#### Define struct function
 ```golang
 
 type PageData struct{
@@ -299,11 +320,7 @@ func main(){
 
 ```
 
-**Lookup function priority order**
-
-> struct method -> parent method -> ... -> global
-
-**Function call syntax**
+#### Call Syntax
 
 > **Note**: all function arguments are string, single quotes are optional.
 
@@ -327,10 +344,21 @@ func main(){
 
 > ->fn('it\'s ok', 'two,xxx', 'three', ...)
 
-*More info:*
+
+### Priority Order
+
+Lookup function priority order:
+
+> struct method -> parent method -> ... -> global
+
+
+### More Examples
 See advance example: <https://github.com/foolin/pagser/tree/master/_examples/advance>
 
-# Implicit type conversion
+## Implicit type conversion
+Automatic implicit type conversion, Output result string convert to int, int64, float64...
+
+**Support type:**
 
 - bool
 - float32
@@ -347,7 +375,11 @@ See advance example: <https://github.com/foolin/pagser/tree/master/_examples/adv
 - []int64
 - []string
 
-# Colly Example
+
+
+## Examples
+
+### Colly Example
 
 Work with colly:
 ```golang
@@ -366,16 +398,14 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 
 ```
 
-# Examples
-
 - [See Examples](https://github.com/foolin/pagser/tree/master/_examples)
 - [See Tests](https://github.com/foolin/pagser/blob/master/pagser_test.go)
 
-# Dependences
+## Dependencies
 - github.com/PuerkitoBio/goquery
 - github.com/spf13/cast
 
-**Extentions:**
+**Extensions:**
 - github.com/mattn/godown
 - github.com/microcosm-cc/bluemonday
 
