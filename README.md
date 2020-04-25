@@ -469,42 +469,6 @@ Run output:
 		},
 		{
 			"Names": [
-				"datawhalechina",
-				"joyful-pandas"
-			],
-			"Description": "Pandas中文教程",
-			"Stars": "937",
-			"Repo": "https://github.com/datawhalechina/joyful-pandas?from=pagser"
-		},
-		{
-			"Names": [
-				"Unity-Technologies",
-				"Graphics"
-			],
-			"Description": "Unity Graphics - Including Scriptable Render Pipeline",
-			"Stars": "116",
-			"Repo": "https://github.com/Unity-Technologies/Graphics?from=pagser"
-		},
-		{
-			"Names": [
-				"Project-MONAI",
-				"MONAI"
-			],
-			"Description": "AI Toolkit for Healthcare Imaging",
-			"Stars": "581",
-			"Repo": "https://github.com/Project-MONAI/MONAI?from=pagser"
-		},
-		{
-			"Names": [
-				"jdan",
-				"98.css"
-			],
-			"Description": "A design system for building faithful recreations of old UIs",
-			"Stars": "3,268",
-			"Repo": "https://github.com/jdan/98.css?from=pagser"
-		},
-		{
-			"Names": [
 				"MicrosoftDocs",
 				"azure-docs"
 			],
@@ -539,69 +503,9 @@ Run output:
 			"Stars": "6,979",
 			"Repo": "https://github.com/ahmetb/kubectx?from=pagser"
 		},
-		{
-			"Names": [
-				"NicknineTheEagle",
-				"TF2-Base"
-			],
-			"Description": "The old Team Fortress 2 source code ported to Source SDK 2013",
-			"Stars": "106",
-			"Repo": "https://github.com/NicknineTheEagle/TF2-Base?from=pagser"
-		},
-		{
-			"Names": [
-				"senguptaumd",
-				"Background-Matting"
-			],
-			"Description": "Background Matting: The World is Your Green Screen",
-			"Stars": "1,486",
-			"Repo": "https://github.com/senguptaumd/Background-Matting?from=pagser"
-		},
-		{
-			"Names": [
-				"PowerShell",
-				"PowerShell"
-			],
-			"Description": "PowerShell for every system!",
-			"Stars": "18,831",
-			"Repo": "https://github.com/PowerShell/PowerShell?from=pagser"
-		},
-		{
-			"Names": [
-				"Azure",
-				"azure-sdk-for-js"
-			],
-			"Description": "This repository is for active development of the Azure SDK for JavaScript (NodeJS \u0026 Browser). For consumers of the SDK we recommend visiting our public developer docs at https://docs.microsoft.com/en-us/javascript/azure/ or our versioned developer docs at https://azure.github.io/azure-sdk-for-js.",
-			"Stars": "464",
-			"Repo": "https://github.com/Azure/azure-sdk-for-js?from=pagser"
-		},
-		{
-			"Names": [
-				"shomali11",
-				"go-interview"
-			],
-			"Description": "Collection of Technical Interview Questions solved with Go",
-			"Stars": "627",
-			"Repo": "https://github.com/shomali11/go-interview?from=pagser"
-		},
-		{
-			"Names": [
-				"profthecopyright",
-				"Thunder_Class"
-			],
-			"Description": "雷课堂大作业",
-			"Stars": "104",
-			"Repo": "https://github.com/profthecopyright/Thunder_Class?from=pagser"
-		},
-		{
-			"Names": [
-				"kwsch",
-				"NHSE"
-			],
-			"Description": "Animal Crossing: New Horizons save editor",
-			"Stars": "268",
-			"Repo": "https://github.com/kwsch/NHSE?from=pagser"
-		},
+
+        //...        
+
 		{
 			"Names": [
 				"serverless",
