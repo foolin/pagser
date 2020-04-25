@@ -32,25 +32,33 @@ const rawParseHtml = `
 	</div>
 	<div class="words" show="true">A|B|C|D</div>
 	
-	<div class="group">
-		<label>Email:</label>
-		<input name="email" value="pagser@foolin.github" />
-		<input name="email" value="hello@pagser.foolin" />
+	<div class="group" id="a">
+		<h2>Email</h2>
+		<ul>
+			<li class="item" id="1" name="email" value="pagser@foolin.github">pagser@foolin.github</li>
+			<li class="item" id="2" name="email" value="pagser@foolin.github">hello@pagser.foolin</li>
+		</ul>
 	</div>
-	<div class="group">
-		<label>Bool:</label>
-		<input name="bool" value="true" /> 
-		<input name="bool" value="false" /> 
+	<div class="group" id="b">
+		<h2>Bool</h2>
+		<ul>
+			<li class="item" id="3" name="bool" value="true">true</li>
+			<li class="item" id="4" name="bool" value="false">false</li>
+		</ul>
 	</div>
-	<div class="group">
-		<label>Number:</label>
-		<input name="number" value="12345" />
-		<input name="number" value="67890" />
+	<div class="group" id="c">
+		<h2>Number</h2>
+		<ul>
+			<li class="item" id="5" name="number" value="12345">12345</li>
+			<li class="item" id="6" name="number" value="67890">67890</li>
+		</ul>
 	</div>
-	<div class="group">
-		<label>Float:</label>
-		<input name="float" value="123.45" /> 
-		<input name="float" value="678.90" />
+	<div class="group" id="d">
+		<h2>Float</h2>
+		<ul>
+			<li class="item" id="7" name="float" value="123.45">123.45</li>
+			<li class="item" id="8" name="float" value="678.90">678.90</li>
+		</ul>
 	</div>
 </body>
 </html>
@@ -84,14 +92,12 @@ type ParseData struct {
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li:last-child"`
 	SubStruct struct {
-		Html   string   `pagser:"->html()"`
 		Label  string   `pagser:"label"`
-		Values []string `pagser:"input->eachAttr(value)"`
-	} `pagser:".group:last-child"`
+		Values []string `pagser:".item->eachAttr(value)"`
+	} `pagser:".group->nodeEq(0)"`
 	SubPtrStruct *struct {
-		Html   string   `pagser:"->html()"`
 		Label  string   `pagser:"label"`
-		Values []string `pagser:"input->eachAttr(value)"`
+		Values []string `pagser:".item->eachAttr(value)"`
 	} `pagser:".group:last-child"`
 	NavFirstID             int            `pagser:".navlink li:first-child->attrEmpty(id, 0)"`
 	NavLastID              uint           `pagser:".navlink li:last-child->attr(id)"`
@@ -114,26 +120,56 @@ type ParseData struct {
 	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
 	WordsConcatText        string         `pagser:".words->textConcat('this is words:', [, $value, ])"`
 	WordsConcatAttr        string         `pagser:".words->attrConcat(show, 'isShow = [', $value, ])"`
-	Email                  string         `pagser:"input[name='email']->attr('value')"`
-	Emails                 []string       `pagser:"input[name='email']->eachAttrEmpty(value, '')"`
-	CastBoolValue          bool           `pagser:"input[name='bool']->attrEmpty(value, false)"`
-	CastBoolNoExist        bool           `pagser:"input[name='bool']->attrEmpty(value2, false)"`
-	CastBoolArray          []bool         `pagser:"input[name='bool']->eachAttrEmpty(value, false)"`
-	CastIntValue           int            `pagser:"input[name='number']->attrEmpty(value, 0)"`
-	CastIntNoExist         int            `pagser:"input[name='number']->attrEmpty(value2, -1)"`
-	CastIntArray           []int          `pagser:"input[name='number']->eachAttrEmpty(value, 0)"`
-	CastInt32Value         int32          `pagser:"input[name='number']->attrEmpty(value, 0)"`
-	CastInt32NoExist       int32          `pagser:"input[name='number']->attrEmpty(value2, -1)"`
-	CastInt32Array         []int32        `pagser:"input[name='number']->eachAttrEmpty(value, 0)"`
-	CastInt64Value         int64          `pagser:"input[name='number']->attrEmpty(value, 0)"`
-	CastInt64NoExist       int64          `pagser:"input[name='number']->attrEmpty(value2, -1)"`
-	CastInt64Array         []int64        `pagser:"input[name='number']->eachAttrEmpty(value, 0)"`
-	CastFloat32Value       float32        `pagser:"input[name='float']->attrEmpty(value, 0)"`
-	CastFloat32NoExist     float32        `pagser:"input[name='float']->attrEmpty(value2, 0.0)"`
-	CastFloat32Array       []float32      `pagser:"input[name='float']->eachAttrEmpty(value, 0)"`
-	CastFloat64Value       float64        `pagser:"input[name='float']->attrEmpty(value, 0)"`
-	CastFloat64NoExist     float64        `pagser:"input[name='float']->attrEmpty(value2, 0.0)"`
-	CastFloat64Array       []float64      `pagser:"input[name='float']->eachAttrEmpty(value, 0)"`
+	Email                  string         `pagser:".item[name='email']->attr('value')"`
+	Emails                 []string       `pagser:".item[name='email']->eachAttrEmpty(value, '')"`
+	CastBoolValue          bool           `pagser:".item[name='bool']->attrEmpty(value, false)"`
+	CastBoolNoExist        bool           `pagser:".item[name='bool']->attrEmpty(value2, false)"`
+	CastBoolArray          []bool         `pagser:".item[name='bool']->eachAttrEmpty(value, false)"`
+	CastIntValue           int            `pagser:".item[name='number']->attrEmpty(value, 0)"`
+	CastIntNoExist         int            `pagser:".item[name='number']->attrEmpty(value2, -1)"`
+	CastIntArray           []int          `pagser:".item[name='number']->eachAttrEmpty(value, 0)"`
+	CastInt32Value         int32          `pagser:".item[name='number']->attrEmpty(value, 0)"`
+	CastInt32NoExist       int32          `pagser:".item[name='number']->attrEmpty(value2, -1)"`
+	CastInt32Array         []int32        `pagser:".item[name='number']->eachAttrEmpty(value, 0)"`
+	CastInt64Value         int64          `pagser:".item[name='number']->attrEmpty(value, 0)"`
+	CastInt64NoExist       int64          `pagser:".item[name='number']->attrEmpty(value2, -1)"`
+	CastInt64Array         []int64        `pagser:".item[name='number']->eachAttrEmpty(value, 0)"`
+	CastFloat32Value       float32        `pagser:".item[name='float']->attrEmpty(value, 0)"`
+	CastFloat32NoExist     float32        `pagser:".item[name='float']->attrEmpty(value2, 0.0)"`
+	CastFloat32Array       []float32      `pagser:".item[name='float']->eachAttrEmpty(value, 0)"`
+	CastFloat64Value       float64        `pagser:".item[name='float']->attrEmpty(value, 0)"`
+	CastFloat64NoExist     float64        `pagser:".item[name='float']->attrEmpty(value2, 0.0)"`
+	CastFloat64Array       []float64      `pagser:".item[name='float']->eachAttrEmpty(value, 0)"`
+	NodeChild              []struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".group->nodeChild()"`
+	NodeChildSelector []struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".group->nodeChild('h2')"`
+	NodeEqFirst struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:".group->nodeEq(0)"`
+	NodeEqLast struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:".group->nodeEq(-1)"`
+	NodeEqPrev struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".item:last-child->nodePrev('[id=\"1\"]')"`
+	NodeEqNext []struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".item:first-child->nodeNext()"`
+	NodeParent []struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:"h2:first-child->nodeParent()"`
+	NodeParentSelector []struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:"h2:first-child->nodeParent('[id=\"a\"]')"`
+	NodeEqSiblings []struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".item:first-child->nodeSiblings()"`
+	NodeEqSiblingsSelector []struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".item:first-child->nodeSiblings('[id=\"2\"]')"`
 }
 
 // this method will auto call, not need register.

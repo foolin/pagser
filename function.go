@@ -71,6 +71,12 @@ var builtinFuncMap = map[string]CallFunc{
 	"eqAndOutHtml":  builtinFuncObj.EqAndOutHtml,
 	"eqAndText":     builtinFuncObj.EqAndText,
 	"html":          builtinFuncObj.Html,
+	"nodeChild":     builtinFuncObj.NodeChild,
+	"nodeEq":        builtinFuncObj.NodeEq,
+	"nodeNext":      builtinFuncObj.NodeNext,
+	"nodeParent":    builtinFuncObj.NodeParent,
+	"nodePrev":      builtinFuncObj.NodePrev,
+	"nodeSiblings":  builtinFuncObj.NodeSiblings,
 	"outerHtml":     builtinFuncObj.OutHtml,
 	"text":          builtinFuncObj.Text,
 	"textConcat":    builtinFuncObj.TextConcat,
@@ -148,8 +154,8 @@ func (builtin BuiltinFunctions) AttrEmpty(node *goquery.Selection, args ...strin
 //		Examples []string `pagser:".selector->attrSplit('keywords', ',')"`
 //	}
 func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 0 {
-		return "", fmt.Errorf("attr(xxx) must has name")
+	if len(args) < 1 {
+		return "", fmt.Errorf("attr(name) must has `name`")
 	}
 	name := args[0]
 	sep := ","
@@ -309,7 +315,7 @@ func (builtin BuiltinFunctions) EachTextJoin(node *goquery.Selection, args ...st
 //		Example string `pagser:".selector->eqAndAttr(0, href)"`
 //	}
 func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 1 {
+	if len(args) < 2 {
 		return "", fmt.Errorf("eqAndAttr(index) must has index and attr name")
 	}
 	indexValue := strings.TrimSpace(args[0])
@@ -326,7 +332,7 @@ func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...strin
 //		Example string `pagser:".selector->eqAndHtml(0)"`
 //	}
 func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 0 {
+	if len(args) < 1 {
 		return "", fmt.Errorf("eqAndHtml(index) must has index")
 	}
 	indexValue := strings.TrimSpace(args[0])
@@ -342,7 +348,7 @@ func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...strin
 //		Example string `pagser:".selector->eqAndOutHtml(0)"`
 //	}
 func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 0 {
+	if len(args) < 1 {
 		return "", fmt.Errorf("eqAndOutHtml(index) must has index")
 	}
 	indexValue := strings.TrimSpace(args[0])
@@ -358,7 +364,7 @@ func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...st
 //		Example string `pagser:".selector->eqAndText(0)"`
 //	}
 func (builtin BuiltinFunctions) EqAndText(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) <= 0 {
+	if len(args) < 1 {
 		return "", fmt.Errorf("eqAndText(index) must has index")
 	}
 	indexValue := strings.TrimSpace(args[0])
@@ -375,6 +381,122 @@ func (builtin BuiltinFunctions) EqAndText(node *goquery.Selection, args ...strin
 //	}
 func (builtin BuiltinFunctions) Html(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	return node.Html()
+}
+
+// nodeChild(selector = '') gets the child elements of each element in the Selection,
+// Filtered by the specified selector if selector not empty,
+// It returns Selection object containing these elements.
+//	struct {
+//		SubStruct struct {
+//			Example string `pagser:".selector->text()"`
+//		}	`pagser:".selector->nodeChild()"`
+//	}
+func (builtin BuiltinFunctions) NodeChild(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	selector := ""
+	if len(args) > 0 {
+		selector = strings.TrimSpace(args[0])
+	}
+	if selector != "" {
+		return node.ChildrenFiltered(selector), nil
+	}
+	return node.Children(), nil
+}
+
+// nodeEq(index) reduces the set of matched elements to the one at the specified index.
+// If a negative index is given, it counts backwards starting at the end of the
+// set. It returns a Selection object, and an empty Selection object if the
+// index is invalid.
+//	struct {
+//		SubStruct struct {
+//			Example string `pagser:".selector->text()"`
+//		}	`pagser:".selector->nodeEq(0)"`
+//	}
+func (builtin BuiltinFunctions) NodeEq(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("nodeEq(index) must has `index` value")
+	}
+	indexValue := strings.TrimSpace(args[0])
+	idx, err := strconv.Atoi(indexValue)
+	if err != nil {
+		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
+	}
+	return node.Eq(idx), nil
+}
+
+// nodeNext() gets the immediately following sibling of each element in the Selection.
+// Filtered by the specified selector if selector not empty,
+// It returns Selection object containing these elements.
+//	struct {
+//		SubStruct struct {
+//			Example string `pagser:".selector->text()"`
+//		}	`pagser:".selector->nodeNext()"`
+//	}
+func (builtin BuiltinFunctions) NodeNext(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	selector := ""
+	if len(args) > 0 {
+		selector = strings.TrimSpace(args[0])
+	}
+	if selector != "" {
+		return node.NextFiltered(selector), nil
+	}
+	return node.Next(), nil
+}
+
+// nodeParent() gets the parent elements of each element in the Selection.
+// Filtered by the specified selector if selector not empty,
+// It returns Selection object containing these elements.
+//	struct {
+//		SubStruct struct {
+//			Example string `pagser:".selector->text()"`
+//		}	`pagser:".selector->nodeParent()"`
+//	}
+func (builtin BuiltinFunctions) NodeParent(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	selector := ""
+	if len(args) > 0 {
+		selector = strings.TrimSpace(args[0])
+	}
+	if selector != "" {
+		return node.ParentFiltered(selector), nil
+	}
+	return node.Parent(), nil
+}
+
+// nodePrev() gets the immediately preceding sibling of each element in the Selection.
+// Filtered by the specified selector if selector not empty,
+// It returns Selection object containing these elements.
+//	struct {
+//		SubStruct struct {
+//			Example string `pagser:".selector->text()"`
+//		}	`pagser:".selector->nodePrev()"`
+//	}
+func (builtin BuiltinFunctions) NodePrev(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	selector := ""
+	if len(args) > 0 {
+		selector = strings.TrimSpace(args[0])
+	}
+	if selector != "" {
+		return node.PrevFiltered(selector), nil
+	}
+	return node.Prev(), nil
+}
+
+// nodeSiblings() gets the siblings of each element in the Selection.
+// Filtered by the specified selector if selector not empty,
+// It returns Selection object containing these elements.
+//	struct {
+//		SubStruct struct {
+//			Example string `pagser:".selector->text()"`
+//		}	`pagser:".selector->nodeSiblings()"`
+//	}
+func (builtin BuiltinFunctions) NodeSiblings(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	selector := ""
+	if len(args) > 0 {
+		selector = strings.TrimSpace(args[0])
+	}
+	if selector != "" {
+		return node.SiblingsFiltered(selector), nil
+	}
+	return node.Siblings(), nil
 }
 
 // outerHtml() get element  outer html, return string.

@@ -93,12 +93,17 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 			if callErr != nil {
 				return fmt.Errorf("tag=`%v` parse func error: %v", tagValue, callErr)
 			}
-			svErr := p.setRefectValue(fieldType.Type.Kind(), fieldValue, callOutValue)
-			if svErr != nil {
-				return fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
+			if subNode, ok := callOutValue.(*goquery.Selection); ok {
+				//set sub node to current node
+				node = subNode
+			} else {
+				svErr := p.setRefectValue(fieldType.Type.Kind(), fieldValue, callOutValue)
+				if svErr != nil {
+					return fmt.Errorf("tag=`%v` set value error: %v", tagValue, svErr)
+				}
+				//goto parse next field
+				continue
 			}
-			//goto parse next field
-			continue
 		}
 
 		if stackRefValues == nil {
