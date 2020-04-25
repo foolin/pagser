@@ -435,6 +435,7 @@ func toJson(v interface{}) string {
 
 Run output:
 ```
+
 2020/04/25 12:26:04 Page data json: 
 -------------
 {
@@ -475,24 +476,6 @@ Run output:
 			"Description": "Open source documentation of Microsoft Azure",
 			"Stars": "3,798",
 			"Repo": "https://github.com/MicrosoftDocs/azure-docs?from=pagser"
-		},
-		{
-			"Names": [
-				"podgorskiy",
-				"ALAE"
-			],
-			"Description": "[CVPR2020] Adversarial Latent Autoencoders",
-			"Stars": "229",
-			"Repo": "https://github.com/podgorskiy/ALAE?from=pagser"
-		},
-		{
-			"Names": [
-				"confluentinc",
-				"demo-scene"
-			],
-			"Description": "Scripts and samples to support Confluent Platform talks. May be rough around the edges. For automated tutorials and QA'd code, see https://github.com/confluentinc/examples/",
-			"Stars": "401",
-			"Repo": "https://github.com/confluentinc/demo-scene?from=pagser"
 		},
 		{
 			"Names": [
