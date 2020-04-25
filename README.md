@@ -433,6 +433,108 @@ func toJson(v interface{}) string {
 
 ```
 
+Run output:
+```
+2020/04/25 12:10:58 Page data json: 
+-------------
+{
+	"Title": "Trending  repositories on GitHub today · GitHub",
+	"RepoList": [
+		{
+			"Name": "pcottle /\n\n\n\n      learnGitBranching",
+			"Description": "An interactive git visualization to challenge and educate!",
+			"Stars": "16,007",
+			"Repo": "https://github.com/pcottle/learnGitBranching?from=pagser"
+		},
+		{
+			"Name": "brave /\n\n\n\n      brave-browser",
+			"Description": "Next generation Brave browser for macOS, Windows, Linux, Android.",
+			"Stars": "5,962",
+			"Repo": "https://github.com/brave/brave-browser?from=pagser"
+		},
+		{
+			"Name": "Unity-Technologies /\n\n\n\n      Graphics",
+			"Description": "Unity Graphics - Including Scriptable Render Pipeline",
+			"Stars": "116",
+			"Repo": "https://github.com/Unity-Technologies/Graphics?from=pagser"
+		},
+		{
+			"Name": "Project-MONAI /\n\n\n\n      MONAI",
+			"Description": "AI Toolkit for Healthcare Imaging",
+			"Stars": "581",
+			"Repo": "https://github.com/Project-MONAI/MONAI?from=pagser"
+		},
+		{
+			"Name": "jdan /\n\n\n\n      98.css",
+			"Description": "A design system for building faithful recreations of old UIs",
+			"Stars": "3,266",
+			"Repo": "https://github.com/jdan/98.css?from=pagser"
+		},
+		{
+			"Name": "MicrosoftDocs /\n\n\n\n      azure-docs",
+			"Description": "Open source documentation of Microsoft Azure",
+			"Stars": "3,798",
+			"Repo": "https://github.com/MicrosoftDocs/azure-docs?from=pagser"
+		},
+		{
+			"Name": "podgorskiy /\n\n\n\n      ALAE",
+			"Description": "[CVPR2020] Adversarial Latent Autoencoders",
+			"Stars": "229",
+			"Repo": "https://github.com/podgorskiy/ALAE?from=pagser"
+		},
+		{
+			"Name": "confluentinc /\n\n\n\n      demo-scene",
+			"Description": "Scripts and samples to support Confluent Platform talks. May be rough around the edges. For automated tutorials and QA'd code, see https://github.com/confluentinc/examples/",
+			"Stars": "401",
+			"Repo": "https://github.com/confluentinc/demo-scene?from=pagser"
+		},
+		{
+			"Name": "ahmetb /\n\n\n\n      kubectx",
+			"Description": "Faster way to switch between clusters and namespaces in kubectl",
+			"Stars": "6,979",
+			"Repo": "https://github.com/ahmetb/kubectx?from=pagser"
+		},
+		{
+			"Name": "NicknineTheEagle /\n\n\n\n      TF2-Base",
+			"Description": "The old Team Fortress 2 source code ported to Source SDK 2013",
+			"Stars": "106",
+			"Repo": "https://github.com/NicknineTheEagle/TF2-Base?from=pagser"
+		},
+		{
+			"Name": "senguptaumd /\n\n\n\n      Background-Matting",
+			"Description": "Background Matting: The World is Your Green Screen",
+			"Stars": "1,484",
+			"Repo": "https://github.com/senguptaumd/Background-Matting?from=pagser"
+		},
+		{
+			"Name": "PowerShell /\n\n\n\n      PowerShell",
+			"Description": "PowerShell for every system!",
+			"Stars": "18,831",
+			"Repo": "https://github.com/PowerShell/PowerShell?from=pagser"
+		},
+		{
+			"Name": "kwsch /\n\n\n\n      NHSE",
+			"Description": "Animal Crossing: New Horizons save editor",
+			"Stars": "268",
+			"Repo": "https://github.com/kwsch/NHSE?from=pagser"
+		},
+		{
+			"Name": "serverless /\n\n\n\n      serverless",
+			"Description": "Serverless Framework – Build web, mobile and IoT applications with serverless architectures using AWS Lambda, Azure Functions, Google CloudFunctions \u0026 more! –",
+			"Stars": "35,502",
+			"Repo": "https://github.com/serverless/serverless?from=pagser"
+		},
+		{
+			"Name": "vuejs /\n\n\n\n      vite",
+			"Description": "Experimental no-bundle dev server for Vue SFCs",
+			"Stars": "1,572",
+			"Repo": "https://github.com/vuejs/vite?from=pagser"
+		}
+	]
+}
+-------------
+```
+
 ### Colly Example
 
 Work with colly:
