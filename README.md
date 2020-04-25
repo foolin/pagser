@@ -222,15 +222,15 @@ type ExamData struct {
 
 > - attrSplit(name, sep)  get attribute value and split by separator to array string.
 
-> - value() get element attribute value by name is `value`, return string, eg: <input value='xxxx' /> will return "xxx".
+> - attr('value') get element attribute value by name is `value`, return string, eg: <input value='xxxx' /> will return "xxx".
 
-> - split(sep) get element text and split by separator to array string, return []string.
+> - textSplit(sep) get element text and split by separator to array string, return []string.
 
-> - eachJoin(sep) get each element text and join to string, return string.
+> - eachTextJoin(sep) get each element text and join to string, return string.
 
 > - ...
 
-More builtin functions see docs: <https://pkg.go.dev/github.com/foolin/pagser>
+More builtin functions see docs: <https://pkg.go.dev/github.com/foolin/pagser?tab=doc#BuiltinFunctions>
 
 ### Extension functions
 
@@ -395,10 +395,10 @@ import (
 type PageData struct {
 	Title    string `pagser:"title"`
 	RepoList []struct {
-		Names       []string `pagser:"h1->split('/', true)"`
+		Names       []string `pagser:"h1->textSplit('/', true)"`
 		Description string   `pagser:"h1 + p"`
-		Stars       string   `pagser:"a.muted-link->eq(0)"`
-		Repo        string   `pagser:"h1 a->concatAttr('href', 'https://github.com', $value, '?from=pagser')"`
+		Stars       string   `pagser:"a.muted-link->eqAndText(0)"`
+		Repo        string   `pagser:"h1 a->attrConcat('href', 'https://github.com', $value, '?from=pagser')"`
 	} `pagser:"article.Box-row"`
 }
 

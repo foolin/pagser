@@ -23,23 +23,35 @@ const rawParseHtml = `
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
-				<li id=''><a href="/">Index</a></li>
-				<li id='2'><a href="/list/web" title="web site">Web page</a></li>
-				<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
-				<li id='4'><a href="/list/mobile" title="mobile page">Mobile Page</a></li>
+				<li id=""><a href="/">Index</a></li>
+				<li id="2"><a href="/list/web" title="web site">Web page</a></li>
+				<li id="3"><a href="/list/pc" title="pc page">Pc Page</a></li>
+				<li id="4"><a href="/list/mobile" title="mobile page">Mobile Page</a></li>
 			</ul>
 		</div>
 	</div>
-	<div class='words' show="true">A|B|C|D</div>
+	<div class="words" show="true">A|B|C|D</div>
 	
-	<input name="email" value="pagser@foolin.github" />
-	<input name="email" value="hello@pagser.foolin" />
-	<input name="bool" value="true" /> 
-	<input name="bool" value="false" /> 
-	<input name="number" value="12345" />
-	<input name="number" value="67890" />
-	<input name="float" value="123.45" /> 
-	<input name="float" value="678.90" />
+	<div class="group">
+		<label>Email:</label>
+		<input name="email" value="pagser@foolin.github" />
+		<input name="email" value="hello@pagser.foolin" />
+	</div>
+	<div class="group">
+		<label>Bool:</label>
+		<input name="bool" value="true" /> 
+		<input name="bool" value="false" /> 
+	</div>
+	<div class="group">
+		<label>Number:</label>
+		<input name="number" value="12345" />
+		<input name="number" value="67890" />
+	</div>
+	<div class="group">
+		<label>Float:</label>
+		<input name="float" value="123.45" /> 
+		<input name="float" value="678.90" />
+	</div>
 </body>
 </html>
 `
@@ -71,6 +83,16 @@ type ParseData struct {
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li:last-child"`
+	SubStruct struct {
+		Html   string   `pagser:"->html()"`
+		Label  string   `pagser:"label"`
+		Values []string `pagser:"input->eachAttr(value)"`
+	} `pagser:".group:last-child"`
+	SubPtrStruct *struct {
+		Html   string   `pagser:"->html()"`
+		Label  string   `pagser:"label"`
+		Values []string `pagser:"input->eachAttr(value)"`
+	} `pagser:".group:last-child"`
 	NavFirstID             int            `pagser:".navlink li:first-child->attrEmpty(id, 0)"`
 	NavLastID              uint           `pagser:".navlink li:last-child->attr(id)"`
 	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrEmpty(id, -999)"`
@@ -81,18 +103,18 @@ type ParseData struct {
 	NavEachAttrEmptyID     []string       `pagser:".navlink li->eachAttrEmpty(id, -1)"`
 	NavEachHtml            []string       `pagser:".navlink li->eachHtml()"`
 	NavEachOutHtml         []string       `pagser:".navlink li->eachOutHtml()"`
-	NavJoinString          string         `pagser:".navlink li->eachJoin(|)"`
-	NavEq                  string         `pagser:".navlink li->eq(1)"`
+	NavJoinString          string         `pagser:".navlink li->eachTextJoin(|)"`
+	NavEqText              string         `pagser:".navlink li->eqAndText(1)"`
 	NavEqAttr              string         `pagser:".navlink li->eqAndAttr(1, id)"`
 	NavEqHtml              string         `pagser:".navlink li->eqAndHtml(1)"`
 	NavEqOutHtml           string         `pagser:".navlink li->eqAndOutHtml(1)"`
 	SubPageData            *SubPageData   `pagser:".navlink li:last-child"`
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
-	WordsSplitArray        []string       `pagser:".words->split(|)"`
+	WordsSplitArray        []string       `pagser:".words->textSplit(|)"`
 	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
-	WordsConcat            string         `pagser:".words->concat('this is words:', [, $value, ])"`
-	WordsConcatAttr        string         `pagser:".words->concatAttr(show, 'isShow = [', $value, ])"`
-	Email                  string         `pagser:"input[name='email']->value()"`
+	WordsConcatText        string         `pagser:".words->textConcat('this is words:', [, $value, ])"`
+	WordsConcatAttr        string         `pagser:".words->attrConcat(show, 'isShow = [', $value, ])"`
+	Email                  string         `pagser:"input[name='email']->attr('value')"`
 	Emails                 []string       `pagser:"input[name='email']->eachAttrEmpty(value, '')"`
 	CastBoolValue          bool           `pagser:"input[name='bool']->attrEmpty(value, false)"`
 	CastBoolNoExist        bool           `pagser:"input[name='bool']->attrEmpty(value2, false)"`
@@ -165,8 +187,8 @@ type GithubData struct {
 	RepoList []struct {
 		Name        string `pagser:"h1"`
 		Description string `pagser:"h1 + p"`
-		Stars       string `pagser:"a.muted-link->eq(0)"`
-		Repo        string `pagser:"h1 a->concatAttr('href', 'https://github.com', $value, '?from=pagser')"`
+		Stars       string `pagser:"a.muted-link->eqAndText(0)"`
+		Repo        string `pagser:"h1 a->attrConcat('href', 'https://github.com', $value, '?from=pagser')"`
 	} `pagser:"article.Box-row"`
 }
 
