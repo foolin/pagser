@@ -275,7 +275,6 @@ func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...s
 }
 
 // attrSplit(name, sep=',', trim='true')  get attribute value and split by separator to array string, return []string.
-//	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
 //		Examples []string `pagser:".selector->attrSplit('keywords', ',')"`
 //	}

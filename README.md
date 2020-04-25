@@ -535,11 +535,15 @@ collector.OnHTML("body", func(e *colly.HTMLElement) {
 - [See Tests](https://github.com/foolin/pagser/blob/master/parse_test.go)
 
 ## Dependencies
+
 - github.com/PuerkitoBio/goquery
+
 - github.com/spf13/cast
 
 **Extensions:**
+
 - github.com/mattn/godown
+
 - github.com/microcosm-cc/bluemonday
 
 
