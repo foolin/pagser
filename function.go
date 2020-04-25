@@ -385,7 +385,7 @@ func (builtin BuiltinFunctions) Html(node *goquery.Selection, args ...string) (o
 
 // nodeChild(selector = '') gets the child elements of each element in the Selection,
 // Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements.
+// It returns Selection object containing these elements for nested struct..
 //	struct {
 //		SubStruct struct {
 //			Example string `pagser:".selector->text()"`
@@ -404,7 +404,7 @@ func (builtin BuiltinFunctions) NodeChild(node *goquery.Selection, args ...strin
 
 // nodeEq(index) reduces the set of matched elements to the one at the specified index.
 // If a negative index is given, it counts backwards starting at the end of the
-// set. It returns a Selection object, and an empty Selection object if the
+// set. It returns a Selection object for nested struct, and an empty Selection object if the
 // index is invalid.
 //	struct {
 //		SubStruct struct {
@@ -425,7 +425,7 @@ func (builtin BuiltinFunctions) NodeEq(node *goquery.Selection, args ...string) 
 
 // nodeNext() gets the immediately following sibling of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements.
+// It returns Selection object containing these elements for nested struct.
 //	struct {
 //		SubStruct struct {
 //			Example string `pagser:".selector->text()"`
@@ -444,7 +444,7 @@ func (builtin BuiltinFunctions) NodeNext(node *goquery.Selection, args ...string
 
 // nodeParent() gets the parent elements of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements.
+// It returns Selection object containing these elements for nested struct.
 //	struct {
 //		SubStruct struct {
 //			Example string `pagser:".selector->text()"`
@@ -463,7 +463,7 @@ func (builtin BuiltinFunctions) NodeParent(node *goquery.Selection, args ...stri
 
 // nodePrev() gets the immediately preceding sibling of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements.
+// It returns Selection object containing these elements for nested struct.
 //	struct {
 //		SubStruct struct {
 //			Example string `pagser:".selector->text()"`
@@ -482,7 +482,7 @@ func (builtin BuiltinFunctions) NodePrev(node *goquery.Selection, args ...string
 
 // nodeSiblings() gets the siblings of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements.
+// It returns Selection object containing these elements for nested struct.
 //	struct {
 //		SubStruct struct {
 //			Example string `pagser:".selector->text()"`
