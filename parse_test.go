@@ -188,8 +188,8 @@ func TestPagser_ParseDocument(t *testing.T) {
 	cfg := Config{
 		TagName:    "pagser",
 		FuncSymbol: "->",
-		CastError:  false,
-		Debug:      false,
+		CastError:  true,
+		Debug:      true,
 	}
 	p, err := NewWithConfig(cfg)
 	if err != nil {

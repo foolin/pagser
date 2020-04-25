@@ -53,7 +53,6 @@ func (p *Pagser) newTag(tagValue string) (*tagTokenizer, error) {
 	//tag.FuncParams = strings.Split(matches[2], ",")
 	params, err := parseFuncParamTokens(matches[3])
 	if err != nil {
-		fmt.Printf("`%v` is invalid: %v", tagValue, err)
 		return nil, fmt.Errorf("tag=`%v` is invalid: %v", tagValue, err)
 	}
 	tag.FuncParams = params
