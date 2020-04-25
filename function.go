@@ -2,6 +2,7 @@ package pagser
 
 import (
 	"fmt"
+	"github.com/spf13/cast"
 	"strconv"
 	"strings"
 
@@ -273,10 +274,10 @@ func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...s
 	return list, nil
 }
 
-// attrSplit(name, sep)  get attribute value and split by separator to array string, return []string.
+// attrSplit(name, sep=',', trim='true')  get attribute value and split by separator to array string, return []string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
-//		Examples []string `pagser:".selector->attrSplit(keywords)"`
+//		Examples []string `pagser:".selector->attrSplit('keywords', ',')"`
 //	}
 func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) <= 0 {
@@ -284,10 +285,25 @@ func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...strin
 	}
 	name := args[0]
 	sep := ","
+	trim := true
 	if len(args) > 1 {
 		sep = args[1]
 	}
-	return strings.Split(node.AttrOr(name, ""), sep), nil
+	if len(args) > 2 {
+		var err error
+		trim, err = cast.ToBoolE(args[2])
+		if err != nil {
+			return nil, fmt.Errorf("`trim` must bool type value: true/false")
+		}
+	}
+
+	list := strings.Split(node.AttrOr(name, ""), sep)
+	if trim {
+		for i, v := range list {
+			list[i] = strings.TrimSpace(v)
+		}
+	}
+	return list, nil
 }
 
 // value() get element attribute value by name is `value`, return string
@@ -300,16 +316,30 @@ func (builtin BuiltinFunctions) Value(node *goquery.Selection, args ...string) (
 	return node.AttrOr("value", ""), nil
 }
 
-// split(sep) get element text and split by separator to array string, return []string.
+// split(sep=',', trim='true') get element text and split by separator to array string, return []string.
 //	struct {
-//		Examples []string `pagser:".selector->split()"`
+//		Examples []string `pagser:".selector->split('|')"`
 //	}
 func (builtin BuiltinFunctions) Split(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	sep := ","
+	trim := true
 	if len(args) > 0 {
 		sep = args[0]
 	}
-	return strings.Split(node.Text(), sep), nil
+	if len(args) > 1 {
+		var err error
+		trim, err = cast.ToBoolE(args[1])
+		if err != nil {
+			return nil, fmt.Errorf("`trim` must bool type value: true/false")
+		}
+	}
+	list := strings.Split(node.Text(), sep)
+	if trim {
+		for i, v := range list {
+			list[i] = strings.TrimSpace(v)
+		}
+	}
+	return list, nil
 }
 
 // eachJoin(sep) get each element text and join to string, return string.

@@ -10,10 +10,10 @@ import (
 type PageData struct {
 	Title    string `pagser:"title"`
 	RepoList []struct {
-		Name        string `pagser:"h1"`
-		Description string `pagser:"h1 + p"`
-		Stars       string `pagser:"a.muted-link->eq(0)"`
-		Repo        string `pagser:"h1 a->concatAttr('href', 'https://github.com', $value, '?from=pagser')"`
+		Names       []string `pagser:"h1->split('/', true)"`
+		Description string   `pagser:"h1 + p"`
+		Stars       string   `pagser:"a.muted-link->eq(0)"`
+		Repo        string   `pagser:"h1 a->concatAttr('href', 'https://github.com', $value, '?from=pagser')"`
 	} `pagser:"article.Box-row"`
 }
 
