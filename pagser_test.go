@@ -79,3 +79,33 @@ func TestNewWithConfig(t *testing.T) {
 	}
 	fmt.Printf("json: %v\n", prettyJson(data))
 }
+
+func TestNewWithConfigTagNameError(t *testing.T) {
+	cfg := Config{
+		TagName:    "",
+		FuncSymbol: "->",
+		CastError:  true,
+		Debug:      true,
+	}
+	_, err := NewWithConfig(cfg)
+	if err != nil {
+		t.Log(err)
+	} else {
+		t.Fatal("Result must return error")
+	}
+}
+
+func TestNewWithConfigFuncSymbolError(t *testing.T) {
+	cfg := Config{
+		TagName:    "pagser",
+		FuncSymbol: "",
+		CastError:  true,
+		Debug:      true,
+	}
+	_, err := NewWithConfig(cfg)
+	if err != nil {
+		t.Log(err)
+	} else {
+		t.Fatal("Result must return error")
+	}
+}
