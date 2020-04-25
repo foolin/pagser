@@ -228,6 +228,8 @@ type ExamData struct {
 
 > - eachTextJoin(sep) get each element text and join to string, return string.
 
+> - nodeEq(index) reduces the set of matched elements to the one at the specified index, return Selection for nested struct.
+
 > - ...
 
 More builtin functions see docs: <https://pkg.go.dev/github.com/foolin/pagser?tab=doc#BuiltinFunctions>
