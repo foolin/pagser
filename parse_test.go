@@ -117,6 +117,7 @@ type ParseData struct {
 	SubPageData            *SubPageData   `pagser:".navlink li:last-child"`
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
 	WordsSplitArray        []string       `pagser:".words->textSplit(|)"`
+	WordsSplitArrayNoTrim  []string       `pagser:".words->textSplit('|', false)"`
 	WordsShow              bool           `pagser:".words->attrEmpty(show, false)"`
 	WordsConcatText        string         `pagser:".words->textConcat('this is words:', [, $value, ])"`
 	WordsConcatAttr        string         `pagser:".words->attrConcat(show, 'isShow = [', $value, ])"`
@@ -152,12 +153,18 @@ type ParseData struct {
 	NodeEqLast struct {
 		Value string `pagser:"h2->text()"`
 	} `pagser:".group->nodeEq(-1)"`
-	NodeEqPrev struct {
+	NodeEqPrev []struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".item:last-child->nodePrev()"`
+	NodeEqPrevSelector struct {
 		Value string `pagser:"->text()"`
 	} `pagser:".item:last-child->nodePrev('[id=\"1\"]')"`
 	NodeEqNext []struct {
 		Value string `pagser:"->text()"`
 	} `pagser:".item:first-child->nodeNext()"`
+	NodeEqNextSelector struct {
+		Value string `pagser:"->text()"`
+	} `pagser:".item:first-child->nodeNext('[id=\"2\"]')"`
 	NodeParent []struct {
 		Value string `pagser:"h2->text()"`
 	} `pagser:"h2:first-child->nodeParent()"`
