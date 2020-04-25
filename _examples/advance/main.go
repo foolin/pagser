@@ -40,6 +40,16 @@ type PageData struct {
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
 	} `pagser:".navlink li"`
+	NavFirst struct {
+		ID   int    `pagser:"->attrEmpty(id, -1)"`
+		Name string `pagser:"a"`
+		Url  string `pagser:"a->attr(href)"`
+	} `pagser:".navlink li->nodeEq(0)"`
+	NavLast *struct {
+		ID   int    `pagser:"->attrEmpty(id, -1)"`
+		Name string `pagser:"a"`
+		Url  string `pagser:"a->attr(href)"`
+	} `pagser:".navlink li->nodeEq(-1)"`
 	NavIds        []int    `pagser:".navlink li->eachAttrEmpty(id, -1)"`
 	NavTexts      []string `pagser:".navlink li"`
 	NavEachTexts  []string `pagser:".navlink li->eachText()"`
