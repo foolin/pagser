@@ -14,6 +14,7 @@
 * **Struct tag grammar** - Grammar is simple, like \`pagser:"a->attr(href)"\`.
 * **Nested Structure** - Support Nested Structure for node.
 * **Configurable** - Support configuration.
+* **Implicit type conversion** - Automatic implicit type conversion, Output result string convert to int, int64, float64...
 * **GoQuery/Colly** - Support all [goquery](https://github.com/PuerkitoBio/goquery) project, such as [go-colly](https://github.com/gocolly/colly).
 
 ## Install
@@ -328,6 +329,23 @@ func main(){
 
 *More info:*
 See advance example: <https://github.com/foolin/pagser/tree/master/_examples/advance>
+
+# Implicit type conversion
+
+- bool
+- float32
+- float64
+- int
+- int32
+- int64
+- string
+- []bool
+- []float32
+- []float64
+- []int
+- []int32
+- []int64
+- []string
 
 # Colly Example
 

@@ -41,6 +41,9 @@ import (
 //
 //	struct method -> parent method -> ... -> global
 //
+// # Implicit convert type
+//
+// 	Automatic type conversion, Output result string convert to int, int64, float64...
 //
 // CallFunc is a define function interface
 type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
