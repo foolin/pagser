@@ -5,27 +5,7 @@ import (
 	"testing"
 )
 
-type ExampleData struct {
-	Title    string   `pagser:"title"`
-	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
-	Navs     []struct {
-		ID   int    `pagser:"->attrEmpty(id, -1)"`
-		Name string `pagser:"a->text()"`
-		Url  string `pagser:"a->attr(href)"`
-	} `pagser:".navlink li"`
-}
-
-type ConfigData struct {
-	Title    string   `query:"title"`
-	Keywords []string `query:"meta[name='keywords']@attrSplit(content)"`
-	Navs     []struct {
-		ID   int    `query:"@attrEmpty(id, -1)"`
-		Name string `query:"a@text()"`
-		Url  string `query:"a@attr(href)"`
-	} `query:".navlink li"`
-}
-
-const rawExampleHtml = `
+const rawPagserHtml = `
 <!doctype html>
 <html>
 <head>
@@ -49,11 +29,31 @@ const rawExampleHtml = `
 </html>
 `
 
+type PagserData struct {
+	Title    string   `pagser:"title"`
+	Keywords []string `pagser:"meta[name='keywords']->attrSplit(content)"`
+	Navs     []struct {
+		ID   int    `pagser:"->attrEmpty(id, -1)"`
+		Name string `pagser:"a->text()"`
+		Url  string `pagser:"a->attr(href)"`
+	} `pagser:".navlink li"`
+}
+
+type ConfigData struct {
+	Title    string   `query:"title"`
+	Keywords []string `query:"meta[name='keywords']@attrSplit(content)"`
+	Navs     []struct {
+		ID   int    `query:"@attrEmpty(id, -1)"`
+		Name string `query:"a@text()"`
+		Url  string `query:"a@attr(href)"`
+	} `query:".navlink li"`
+}
+
 func TestNew(t *testing.T) {
 	p := New()
 
-	var data ExampleData
-	err := p.Parse(&data, rawExampleHtml)
+	var data PagserData
+	err := p.Parse(&data, rawPagserHtml)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +73,7 @@ func TestNewWithConfig(t *testing.T) {
 	}
 
 	var data ConfigData
-	err = p.Parse(&data, rawExampleHtml)
+	err = p.Parse(&data, rawPagserHtml)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -6,17 +6,17 @@ import (
 	"net/http"
 )
 
-const rawPageHtml = `
+const rawExampleHtml = `
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Pagser Title</title>
+    <title>Pagser Example</title>
 	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
 </head>
 
 <body>
-	<h1>H1 Pagser Example</h1>
+	<h1><u>Pagser</u> H1 Title</h1>
 	<div class="navlink">
 		<div class="container">
 			<ul class="clearfix">
@@ -27,11 +27,21 @@ const rawPageHtml = `
 			</ul>
 		</div>
 	</div>
+	<div class='words' show="true">A|B|C|D</div>
+	
+	<input name="email" value="pagser@foolin.github" />
+	<input name="email" value="hello@pagser.foolin" />
+	<input name="bool" value="true" /> 
+	<input name="bool" value="false" /> 
+	<input name="number" value="12345" />
+	<input name="number" value="67890" />
+	<input name="float" value="123.45" /> 
+	<input name="float" value="678.90" />
 </body>
 </html>
 `
 
-type ExampPage struct {
+type ExamplePage struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
@@ -45,9 +55,9 @@ func ExamplePagser_Parse() {
 	//New default Config
 	p := New()
 	//data parser model
-	var page ExampPage
+	var page ExamplePage
 	//parse html data
-	err := p.Parse(&page, rawPageHtml)
+	err := p.Parse(&page, rawExampleHtml)
 	//check error
 	if err != nil {
 		log.Fatal(err)
@@ -66,7 +76,7 @@ func ExamplePagser_ParseReader() {
 	//New default Config
 	p := New()
 	//data parser model
-	var page ExampPage
+	var page ExamplePage
 	//parse html data
 	err = p.ParseReader(&page, resp.Body)
 	//check error
@@ -90,9 +100,9 @@ func ExampleNewWithConfig() {
 	}
 
 	//data parser model
-	var page ExampPage
+	var page ExamplePage
 	//parse html data
-	err = p.Parse(&page, rawPageHtml)
+	err = p.Parse(&page, rawExampleHtml)
 	//check error
 	if err != nil {
 		log.Fatal(err)

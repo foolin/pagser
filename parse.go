@@ -63,7 +63,7 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 		tagValue, tagOk := fieldType.Tag.Lookup(p.Config.TagName)
 		if !tagOk {
 			if p.Config.Debug {
-				fmt.Printf("[WARN] not found tag name=[%v] in field: %v, eg: `%v:\".navlink a->attr(href)\"`\n",
+				fmt.Printf("[INFO] not found tag name=[%v] in field: %v, eg: `%v:\".navlink a->attr(href)\"`\n",
 					p.Config.TagName, fieldType.Name, p.Config.TagName)
 			}
 			continue

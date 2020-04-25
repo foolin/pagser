@@ -13,7 +13,7 @@ type PageData struct {
 		Name        string `pagser:"h1"`
 		Description string `pagser:"h1 + p"`
 		Stars       string `pagser:"a.muted-link->eq(0)"`
-		Repo        string `pagser:"h1 a->concatAttr(href, 'github.com', $value)"`
+		Repo        string `pagser:"h1 a->concatAttr('href', 'https://github.com', $value, '?from=pagser')"`
 	} `pagser:"article.Box-row"`
 }
 

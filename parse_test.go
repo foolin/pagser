@@ -9,7 +9,42 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type PageData struct {
+const rawParseHtml = `
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Pagser Example</title>
+	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
+</head>
+
+<body>
+	<h1><u>Pagser</u> H1 Title</h1>
+	<div class="navlink">
+		<div class="container">
+			<ul class="clearfix">
+				<li id=''><a href="/">Index</a></li>
+				<li id='2'><a href="/list/web" title="web site">Web page</a></li>
+				<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
+				<li id='4'><a href="/list/mobile" title="mobile page">Mobile Page</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class='words' show="true">A|B|C|D</div>
+	
+	<input name="email" value="pagser@foolin.github" />
+	<input name="email" value="hello@pagser.foolin" />
+	<input name="bool" value="true" /> 
+	<input name="bool" value="false" /> 
+	<input name="number" value="12345" />
+	<input name="number" value="67890" />
+	<input name="float" value="123.45" /> 
+	<input name="float" value="678.90" />
+</body>
+</html>
+`
+
+type ParseData struct {
 	Title               string   `pagser:"title"`
 	Keywords            []string `pagser:"meta[name='keywords']->attrSplit(content)"`
 	H1                  string   `pagser:"h1"`
@@ -90,22 +125,22 @@ func SameFunc(selection *goquery.Selection, args ...string) (out interface{}, er
 }
 
 // this method will auto call, not need register.
-func (pd PageData) MyStructFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd ParseData) MyStructFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "Struct-" + selection.Text(), nil
 }
 
-func (pd PageData) ParentFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd ParseData) ParentFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "ParentFunc-" + selection.Text(), nil
 }
 
 // this method will auto call, not need register.
-func (pd *PageData) FillFieldFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd *ParseData) FillFieldFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	text := selection.Text()
 	pd.FillFieldOtherValue = "This value is set by the FillFieldFunc() function -" + text
 	return "FillFieldFunc-" + text, nil
 }
 
-func (pd *PageData) SameFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+func (pd *ParseData) SameFunc(selection *goquery.Selection, args ...string) (out interface{}, err error) {
 	return "Struct-Same-Func-" + selection.Text(), nil
 }
 
@@ -124,40 +159,16 @@ func (spd SubPageData) SameFunc(selection *goquery.Selection, args ...string) (o
 	return "Sub-Struct-Same-Func-" + selection.Text(), nil
 }
 
-const rawPpageHtml = `
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Pagser Example</title>
-	<meta name="keywords" content="golang,pagser,goquery,html,page,parser,colly">
-</head>
-
-<body>
-	<h1><u>Pagser</u> H1 Title</h1>
-	<div class="navlink">
-		<div class="container">
-			<ul class="clearfix">
-				<li id=''><a href="/">Index</a></li>
-				<li id='2'><a href="/list/web" title="web site">Web page</a></li>
-				<li id='3'><a href="/list/pc" title="pc page">Pc Page</a></li>
-				<li id='4'><a href="/list/mobile" title="mobile page">Mobile Page</a></li>
-			</ul>
-		</div>
-	</div>
-	<div class='words' show="true">A|B|C|D</div>
-	
-	<input name="email" value="pagser@foolin.github" />
-	<input name="email" value="hello@pagser.foolin" />
-	<input name="bool" value="true" /> 
-	<input name="bool" value="false" /> 
-	<input name="number" value="12345" />
-	<input name="number" value="67890" />
-	<input name="float" value="123.45" /> 
-	<input name="float" value="678.90" />
-</body>
-</html>
-`
+// Page parse from https://github.com/trending
+type GithubData struct {
+	Title    string `pagser:"title"`
+	RepoList []struct {
+		Name        string `pagser:"h1"`
+		Description string `pagser:"h1 + p"`
+		Stars       string `pagser:"a.muted-link->eq(0)"`
+		Repo        string `pagser:"h1 a->concatAttr('href', 'https://github.com', $value, '?from=pagser')"`
+	} `pagser:"article.Box-row"`
+}
 
 func TestParse(t *testing.T) {
 	p := New()
@@ -165,8 +176,8 @@ func TestParse(t *testing.T) {
 	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
 	p.RegisterFunc("SameFunc", SameFunc)
 
-	var data PageData
-	err := p.Parse(&data, rawPpageHtml)
+	var data ParseData
+	err := p.Parse(&data, rawParseHtml)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,8 +188,8 @@ func TestPagser_ParseDocument(t *testing.T) {
 	cfg := Config{
 		TagName:    "pagser",
 		FuncSymbol: "->",
-		CastError:  true,
-		Debug:      true,
+		CastError:  false,
+		Debug:      false,
 	}
 	p, err := NewWithConfig(cfg)
 	if err != nil {
@@ -189,12 +200,13 @@ func TestPagser_ParseDocument(t *testing.T) {
 	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
 	p.RegisterFunc("SameFunc", SameFunc)
 
-	var data PageData
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawPageHtml))
+	var data ParseData
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawParseHtml))
 	if err != nil {
 		t.Fatal(err)
 	}
 	err = p.ParseDocument(&data, doc)
+	//err = p.ParseSelection(&data, doc.Selection)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -202,7 +214,7 @@ func TestPagser_ParseDocument(t *testing.T) {
 }
 
 func TestPagser_ParseReader(t *testing.T) {
-	res, err := http.Get("https://raw.githubusercontent.com/foolin/pagser/master/_examples/pages/demo.html")
+	res, err := http.Get("https://github.com/trending")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -210,10 +222,7 @@ func TestPagser_ParseReader(t *testing.T) {
 
 	p := New()
 
-	//register global function
-	p.RegisterFunc("MyGlobFunc", MyGlobalFunc)
-
-	var data PageData
+	var data GithubData
 	err = p.ParseReader(&data, res.Body)
 	if err != nil {
 		t.Fatal(err)

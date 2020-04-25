@@ -364,7 +364,6 @@ func (builtin BuiltinFunctions) ConcatAttr(node *goquery.Selection, args ...stri
 }
 
 // RegisterFunc register function for parse
-func (p *Pagser) RegisterFunc(name string, fn CallFunc) error {
+func (p *Pagser) RegisterFunc(name string, fn CallFunc) {
 	p.ctxFuncs[name] = fn
-	return nil
 }
