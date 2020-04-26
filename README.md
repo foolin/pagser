@@ -4,8 +4,7 @@
 
 **Pagser** inspired by  <u>**pag**</u>e par<u>**ser**</u>。
 
-**Pagser** is a simple, easy, extensible, configurable HTML parser to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags for golang crawler.
-
+**Pagser** is a simply, extensible, configurable parse and deserialize html page to struct based on [goquery](https://github.com/PuerkitoBio/goquery) and struct tags for golang crawler.
 
 ## Contents
 
