@@ -2,86 +2,36 @@ package pagser
 
 import (
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/spf13/cast"
+	"net/url"
 	"strconv"
 	"strings"
-
-	"github.com/PuerkitoBio/goquery"
 )
-
-// CallFunc write function interface
-
-// # Define Global Function
-//
-//	func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
-//		//Todo
-//		return "Hello", nil
-//	}
-//
-//	//Register function
-//	pagser.RegisterFunc("MyFunc", MyFunc)
-//
-//	//Use function
-//	type PageData struct{
-//	     Text string `pagser:"h1->MyFunc()"`
-//	}
-//
-//
-// # Define Struct Function
-//	//Use function
-//	type PageData struct{
-//	     Text string `pagser:"h1->MyFunc()"`
-//	}
-//
-//	func (pd PageData) MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {
-//		//Todo
-//		return "Hello", nil
-//	}
-//
-// # Lookup function priority order
-//
-//	struct method -> parent method -> ... -> global
-//
-// # Implicit convert type
-//
-// 	Automatic type conversion, Output result string convert to int, int64, float64...
-//
-// CallFunc is a define function interface
-type CallFunc func(node *goquery.Selection, args ...string) (out interface{}, err error)
 
 // Builtin functions are registered with a lowercase initial, eg: Text -> text()
 type BuiltinFunctions struct {
 }
 
-var builtinFuncObj BuiltinFunctions
-var builtinFuncMap = map[string]CallFunc{
-	"attr":          builtinFuncObj.Attr,
-	"attrConcat":    builtinFuncObj.AttrConcat,
-	"attrEmpty":     builtinFuncObj.AttrEmpty,
-	"attrSplit":     builtinFuncObj.AttrSplit,
-	"eachAttr":      builtinFuncObj.EachAttr,
-	"eachAttrEmpty": builtinFuncObj.EachAttrEmpty,
-	"eachHtml":      builtinFuncObj.EachHtml,
-	"eachOutHtml":   builtinFuncObj.EachOutHtml,
-	"eachText":      builtinFuncObj.EachText,
-	"eachTextEmpty": builtinFuncObj.EachTextEmpty,
-	"eachTextJoin":  builtinFuncObj.EachTextJoin,
-	"eqAndAttr":     builtinFuncObj.EqAndAttr,
-	"eqAndHtml":     builtinFuncObj.EqAndHtml,
-	"eqAndOutHtml":  builtinFuncObj.EqAndOutHtml,
-	"eqAndText":     builtinFuncObj.EqAndText,
-	"html":          builtinFuncObj.Html,
-	"nodeChild":     builtinFuncObj.NodeChild,
-	"nodeEq":        builtinFuncObj.NodeEq,
-	"nodeNext":      builtinFuncObj.NodeNext,
-	"nodeParent":    builtinFuncObj.NodeParent,
-	"nodePrev":      builtinFuncObj.NodePrev,
-	"nodeSiblings":  builtinFuncObj.NodeSiblings,
-	"outerHtml":     builtinFuncObj.OutHtml,
-	"text":          builtinFuncObj.Text,
-	"textConcat":    builtinFuncObj.TextConcat,
-	"textEmpty":     builtinFuncObj.TextEmpty,
-	"textSplit":     builtinFuncObj.TextSplit,
+// absHref(baseUrl) get element attribute name `href`, and convert to absolute url, return *URL.
+// `baseUrl` is the base url like `https://example.com/`.
+//	//<a href="/foolin/pagser">Pagser</a>
+//	struct {
+//		Example string `pagser:".selector->absHref('https://github.com/')"`
+//	}
+func (builtin BuiltinFunctions) AbsHref(selection *goquery.Selection, args ...string) (out interface{}, err error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("args must has baseUrl")
+	}
+	baseUrl, err := url.Parse(args[0])
+	if err != nil {
+		return "", fmt.Errorf("invalid base url: %v error: %v", baseUrl, err)
+	}
+	hrefUrl, err := url.Parse(selection.AttrOr("href", ""))
+	if err != nil {
+		return "", err
+	}
+	return baseUrl.ResolveReference(hrefUrl), nil
 }
 
 // attr(name, defaultValue='') get element attribute value, return string.
@@ -383,122 +333,6 @@ func (builtin BuiltinFunctions) Html(node *goquery.Selection, args ...string) (o
 	return node.Html()
 }
 
-// nodeChild(selector = '') gets the child elements of each element in the Selection,
-// Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements for nested struct..
-//	struct {
-//		SubStruct struct {
-//			Example string `pagser:".selector->text()"`
-//		}	`pagser:".selector->nodeChild()"`
-//	}
-func (builtin BuiltinFunctions) NodeChild(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	selector := ""
-	if len(args) > 0 {
-		selector = strings.TrimSpace(args[0])
-	}
-	if selector != "" {
-		return node.ChildrenFiltered(selector), nil
-	}
-	return node.Children(), nil
-}
-
-// nodeEq(index) reduces the set of matched elements to the one at the specified index.
-// If a negative index is given, it counts backwards starting at the end of the
-// set. It returns a Selection object for nested struct, and an empty Selection object if the
-// index is invalid.
-//	struct {
-//		SubStruct struct {
-//			Example string `pagser:".selector->text()"`
-//		}	`pagser:".selector->nodeEq(0)"`
-//	}
-func (builtin BuiltinFunctions) NodeEq(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	if len(args) < 1 {
-		return "", fmt.Errorf("nodeEq(index) must has `index` value")
-	}
-	indexValue := strings.TrimSpace(args[0])
-	idx, err := strconv.Atoi(indexValue)
-	if err != nil {
-		return "", fmt.Errorf("index=`" + indexValue + "` is not number: " + err.Error())
-	}
-	return node.Eq(idx), nil
-}
-
-// nodeNext() gets the immediately following sibling of each element in the Selection.
-// Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements for nested struct.
-//	struct {
-//		SubStruct struct {
-//			Example string `pagser:".selector->text()"`
-//		}	`pagser:".selector->nodeNext()"`
-//	}
-func (builtin BuiltinFunctions) NodeNext(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	selector := ""
-	if len(args) > 0 {
-		selector = strings.TrimSpace(args[0])
-	}
-	if selector != "" {
-		return node.NextFiltered(selector), nil
-	}
-	return node.Next(), nil
-}
-
-// nodeParent() gets the parent elements of each element in the Selection.
-// Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements for nested struct.
-//	struct {
-//		SubStruct struct {
-//			Example string `pagser:".selector->text()"`
-//		}	`pagser:".selector->nodeParent()"`
-//	}
-func (builtin BuiltinFunctions) NodeParent(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	selector := ""
-	if len(args) > 0 {
-		selector = strings.TrimSpace(args[0])
-	}
-	if selector != "" {
-		return node.ParentFiltered(selector), nil
-	}
-	return node.Parent(), nil
-}
-
-// nodePrev() gets the immediately preceding sibling of each element in the Selection.
-// Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements for nested struct.
-//	struct {
-//		SubStruct struct {
-//			Example string `pagser:".selector->text()"`
-//		}	`pagser:".selector->nodePrev()"`
-//	}
-func (builtin BuiltinFunctions) NodePrev(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	selector := ""
-	if len(args) > 0 {
-		selector = strings.TrimSpace(args[0])
-	}
-	if selector != "" {
-		return node.PrevFiltered(selector), nil
-	}
-	return node.Prev(), nil
-}
-
-// nodeSiblings() gets the siblings of each element in the Selection.
-// Filtered by the specified selector if selector not empty,
-// It returns Selection object containing these elements for nested struct.
-//	struct {
-//		SubStruct struct {
-//			Example string `pagser:".selector->text()"`
-//		}	`pagser:".selector->nodeSiblings()"`
-//	}
-func (builtin BuiltinFunctions) NodeSiblings(node *goquery.Selection, args ...string) (out interface{}, err error) {
-	selector := ""
-	if len(args) > 0 {
-		selector = strings.TrimSpace(args[0])
-	}
-	if selector != "" {
-		return node.SiblingsFiltered(selector), nil
-	}
-	return node.Siblings(), nil
-}
-
 // outerHtml() get element  outer html, return string.
 //	struct {
 //		Example string `pagser:".selector->outerHtml()"`
@@ -581,13 +415,4 @@ func (builtin BuiltinFunctions) TextSplit(node *goquery.Selection, args ...strin
 		}
 	}
 	return list, nil
-}
-
-// RegisterFunc register function for parse result
-//	pagser.RegisterFunc("MyFunc", func(node *goquery.Selection, args ...string) (out interface{}, err error) {
-//		//Todo
-//		return "Hello", nil
-//	})
-func (p *Pagser) RegisterFunc(name string, fn CallFunc) {
-	p.ctxFuncs[name] = fn
 }

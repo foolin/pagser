@@ -80,21 +80,27 @@ type ParseData struct {
 	NavList             []struct {
 		ID   int `pagser:"->attrEmpty(id, -1)"`
 		Link struct {
-			Name string `pagser:"->text()"`
-			Url  string `pagser:"->attr(href)"`
+			Name   string `pagser:"->text()"`
+			Url    string `pagser:"->attr(href)"`
+			AbsUrl string `pagser:"->absHref('https://thisvar.com')"`
 		} `pagser:"a"`
 		LinkHtml       string `pagser:"a->html()"`
 		ParentFuncName string `pagser:"a->ParentFunc()"`
 	} `pagser:".navlink li"`
+	NavFirst struct {
+		ID   int    `pagser:"->attrEmpty(id, 0)"`
+		Name string `pagser:"a->text()"`
+		Url  string `pagser:"a->attr(href)"`
+	} `pagser:".navlink li->first()"`
 	NavLast struct {
 		ID   int    `pagser:"->attrEmpty(id, 0)"`
 		Name string `pagser:"a->text()"`
 		Url  string `pagser:"a->attr(href)"`
-	} `pagser:".navlink li:last-child"`
+	} `pagser:".navlink li->last()"`
 	SubStruct struct {
 		Label  string   `pagser:"label"`
 		Values []string `pagser:".item->eachAttr(value)"`
-	} `pagser:".group->nodeEq(0)"`
+	} `pagser:".group->eq(0)"`
 	SubPtrStruct *struct {
 		Label  string   `pagser:"label"`
 		Values []string `pagser:".item->eachAttr(value)"`
@@ -143,40 +149,49 @@ type ParseData struct {
 	CastFloat64Array       []float64      `pagser:".item[name='float']->eachAttrEmpty(value, 0)"`
 	NodeChild              []struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".group->nodeChild()"`
+	} `pagser:".group->child()"`
 	NodeChildSelector []struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".group->nodeChild('h2')"`
+	} `pagser:".group->child('h2')"`
 	NodeEqFirst struct {
 		Value string `pagser:"h2->text()"`
-	} `pagser:".group->nodeEq(0)"`
+	} `pagser:".group->eq(0)"`
 	NodeEqLast struct {
 		Value string `pagser:"h2->text()"`
-	} `pagser:".group->nodeEq(-1)"`
+	} `pagser:".group->eq(-1)"`
 	NodeEqPrev []struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".item:last-child->nodePrev()"`
+	} `pagser:".item:last-child->prev()"`
 	NodeEqPrevSelector struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".item:last-child->nodePrev('[id=\"1\"]')"`
+	} `pagser:".item:last-child->prev('[id=\"1\"]')"`
 	NodeEqNext []struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".item:first-child->nodeNext()"`
+	} `pagser:".item:first-child->next()"`
 	NodeEqNextSelector struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".item:first-child->nodeNext('[id=\"2\"]')"`
+	} `pagser:".item:first-child->next('[id=\"2\"]')"`
 	NodeParent []struct {
 		Value string `pagser:"h2->text()"`
-	} `pagser:"h2:first-child->nodeParent()"`
+	} `pagser:"h2:first-child->parent()"`
+	NodeParents []struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:"h2:first-child->parents()"`
+	NodeParentsSelector []struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:"h2:first-child->parents('[id=\"b\"]')"`
+	NodeParentsUntil []struct {
+		Value string `pagser:"h2->text()"`
+	} `pagser:"h2:first-child->parentsUntil('[id=\"b\"]')"`
 	NodeParentSelector []struct {
 		Value string `pagser:"h2->text()"`
-	} `pagser:"h2:first-child->nodeParent('[id=\"a\"]')"`
+	} `pagser:"h2:first-child->parent('[id=\"a\"]')"`
 	NodeEqSiblings []struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".item:first-child->nodeSiblings()"`
+	} `pagser:".item:first-child->siblings()"`
 	NodeEqSiblingsSelector []struct {
 		Value string `pagser:"->text()"`
-	} `pagser:".item:first-child->nodeSiblings('[id=\"2\"]')"`
+	} `pagser:".item:first-child->siblings('[id=\"2\"]')"`
 }
 
 // this method will auto call, not need register.
