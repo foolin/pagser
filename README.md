@@ -32,6 +32,13 @@
 go get -u github.com/foolin/pagser
 ```
 
+Or get the specified version:
+```bash
+go get github.com/foolin/pagser@{version}
+```
+The {version} release list: <https://github.com/foolin/pagser/releases>
+
+
 ## Features
 
 * **Simple** - Use golang struct tag syntax.
