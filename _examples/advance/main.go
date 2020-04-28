@@ -36,20 +36,21 @@ type PageData struct {
 	Title string `pagser:"title"`
 	H1    string `pagser:"h1"`
 	Navs  []struct {
-		ID   int    `pagser:"->attrEmpty(id, -1)"`
-		Name string `pagser:"a"`
-		Url  string `pagser:"a->attr(href)"`
+		ID     int    `pagser:"->attrEmpty(id, -1)"`
+		Name   string `pagser:"a"`
+		Url    string `pagser:"a->attr(href)"`
+		AbsUrl string `pagser:"a->absHref('https://github.com/foolin/pagser')"`
 	} `pagser:".navlink li"`
 	NavFirst struct {
 		ID   int    `pagser:"->attrEmpty(id, -1)"`
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
-	} `pagser:".navlink li->nodeEq(0)"`
+	} `pagser:".navlink li->eq(0)"`
 	NavLast *struct {
 		ID   int    `pagser:"->attrEmpty(id, -1)"`
 		Name string `pagser:"a"`
 		Url  string `pagser:"a->attr(href)"`
-	} `pagser:".navlink li->nodeEq(-1)"`
+	} `pagser:".navlink li->eq(-1)"`
 	NavIds        []int    `pagser:".navlink li->eachAttrEmpty(id, -1)"`
 	NavTexts      []string `pagser:".navlink li"`
 	NavEachTexts  []string `pagser:".navlink li->eachText()"`

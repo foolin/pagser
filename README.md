@@ -11,8 +11,8 @@
 - [Install](#install)
 - [Features](#features)
 - [Docs](#docs)
-- [Configuration](#configuration)
 - [Usage](#usage)
+- [Configuration](#configuration)
 - [Struct Tag Grammar](#struct-tag-grammar)
 - [Functions](#functions)
     - [Builtin functions](#builtin-functions)
@@ -227,7 +227,7 @@ type ExamData struct {
 
 > - eachTextJoin(sep) get each element text and join to string, return string.
 
-> - nodeEq(index) reduces the set of matched elements to the one at the specified index, return Selection for nested struct.
+> - eq(index) reduces the set of matched elements to the one at the specified index, return Selection for nested struct.
 
 > - ...
 
