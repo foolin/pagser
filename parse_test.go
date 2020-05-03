@@ -120,6 +120,7 @@ type ParseData struct {
 	NavEqAttr              string         `pagser:".navlink li->eqAndAttr(1, id)"`
 	NavEqHtml              string         `pagser:".navlink li->eqAndHtml(1)"`
 	NavEqOutHtml           string         `pagser:".navlink li->eqAndOutHtml(1)"`
+	NavSize                int            `pagser:".navlink li->size()"`
 	SubPageData            *SubPageData   `pagser:".navlink li:last-child"`
 	SubPageDataList        []*SubPageData `pagser:".navlink li"`
 	WordsSplitArray        []string       `pagser:".words->textSplit(|)"`
