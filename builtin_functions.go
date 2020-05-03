@@ -345,6 +345,14 @@ func (builtin BuiltinFunctions) OutHtml(node *goquery.Selection, args ...string)
 	return html, nil
 }
 
+// size() returns the number of elements in the Selection object, return int.
+//	struct {
+//		Size int `pagser:".selector->size()"`
+//	}
+func (builtin BuiltinFunctions) Size(node *goquery.Selection, args ...string) (out interface{}, err error) {
+	return node.Size(), nil
+}
+
 //text() get element  text, return string, this is default function, if not define function in struct tag.
 //	struct {
 //		Example string `pagser:".selector->text()"`

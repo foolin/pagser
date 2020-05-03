@@ -70,6 +70,7 @@ var builtinFuncMap = map[string]CallFunc{
 	"eqAndText":     builtinFun.EqAndText,
 	"html":          builtinFun.Html,
 	"outerHtml":     builtinFun.OutHtml,
+	"size":          builtinFun.Size,
 	"text":          builtinFun.Text,
 	"textConcat":    builtinFun.TextConcat,
 	"textEmpty":     builtinFun.TextEmpty,
