@@ -51,7 +51,7 @@ var builtinFun BuiltinFunctions
 var builtinSel BuiltinSelections
 
 //builtin functions
-var builtinFuncMap = map[string]CallFunc{
+var builtinFuncs = map[string]CallFunc{
 	"absHref":       builtinFun.AbsHref,
 	"attr":          builtinFun.Attr,
 	"attrConcat":    builtinFun.AttrConcat,
@@ -94,5 +94,5 @@ var builtinFuncMap = map[string]CallFunc{
 //		return "Hello", nil
 //	})
 func (p *Pagser) RegisterFunc(name string, fn CallFunc) {
-	p.ctxFuncs[name] = fn
+	p.mapFuncs.Store(name, fn)
 }

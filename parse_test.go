@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/PuerkitoBio/goquery"
@@ -309,4 +310,24 @@ func TestPagser_ParseReader(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("json: %v\n", prettyJson(data))
+}
+
+func TestPagser_RegisterFunc(t *testing.T) {
+	threads := 1000
+	p := New()
+	var wg sync.WaitGroup
+
+	for i := 0; i < threads; i++ {
+		wg.Add(1)
+		go func() {
+			for j := 0; j < 10; j++ {
+				for k, v := range builtinFuncs {
+					p.RegisterFunc(k, v)
+				}
+			}
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
 }

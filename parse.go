@@ -72,13 +72,16 @@ func (p *Pagser) doParse(v interface{}, stackRefValues []reflect.Value, selectio
 			continue
 		}
 
-		tag, ok := p.ctxTags[tagValue]
-		if !ok || tag == nil {
+		cacheTag, ok := p.mapTags.Load(tagValue)
+		var tag *tagTokenizer
+		if !ok || cacheTag == nil {
 			tag, err = p.newTag(tagValue)
 			if err != nil {
 				return err
 			}
-			p.ctxTags[tagValue] = tag
+			p.mapTags.Store(tagValue, tag)
+		} else {
+			tag = cacheTag.(*tagTokenizer)
 		}
 
 		node := selection
@@ -201,8 +204,9 @@ func (p *Pagser) findAndExecFunc(objRefValue reflect.Value, stackRefValues []ref
 		}
 
 		//global function
-		if fn, ok := p.ctxFuncs[selTag.FuncName]; ok {
-			outValue, err := fn(node, selTag.FuncParams...)
+		if fn, ok := p.mapFuncs.Load(selTag.FuncName); ok {
+			cfn := fn.(CallFunc)
+			outValue, err := cfn(node, selTag.FuncParams...)
 			if err != nil {
 				return nil, fmt.Errorf("call registered func %v error: %v", selTag.FuncName, err)
 			}

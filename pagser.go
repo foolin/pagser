@@ -8,13 +8,18 @@
 
 package pagser
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // Pagser the page parser
 type Pagser struct {
-	Config   Config
-	ctxTags  map[string]*tagTokenizer // tag value => tagTokenizer
-	ctxFuncs map[string]CallFunc      // name => func
+	Config Config
+	//ctxTags  map[string]*tagTokenizer // tag value => tagTokenizer
+	mapTags sync.Map //map[string]*tagTokenizer
+	//ctxFuncs map[string]CallFunc      // name => func
+	mapFuncs sync.Map //map[string]CallFunc
 }
 
 // New create pagser client
@@ -31,9 +36,13 @@ func NewWithConfig(cfg Config) (*Pagser, error) {
 	if cfg.FuncSymbol == "" {
 		return nil, errors.New("FuncSymbol must not empty")
 	}
-	return &Pagser{
-		Config:   cfg,
-		ctxTags:  make(map[string]*tagTokenizer, 0),
-		ctxFuncs: builtinFuncMap,
-	}, nil
+	p := Pagser{
+		Config: cfg,
+		//mapTags:  make(map[string]*tagTokenizer, 0),
+		//mapFuncs: builtinFuncs,
+	}
+	for k, v := range builtinFuncs {
+		p.mapFuncs.Store(k, v)
+	}
+	return &p, nil
 }
