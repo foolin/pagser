@@ -9,11 +9,11 @@ import (
 	"strings"
 )
 
-// Builtin functions are registered with a lowercase initial, eg: Text -> text()
+// BuiltinFunctions builtin functions are registered with a lowercase initial, eg: Text -> text()
 type BuiltinFunctions struct {
 }
 
-// absHref(baseUrl) get element attribute name `href`, and convert to absolute url, return *URL.
+// AbsHref absHref(baseUrl) get element attribute name `href`, and convert to absolute url, return *URL.
 // `baseUrl` is the base url like `https://example.com/`.
 //	//<a href="/foolin/pagser">Pagser</a>
 //	struct {
@@ -34,7 +34,7 @@ func (builtin BuiltinFunctions) AbsHref(selection *goquery.Selection, args ...st
 	return baseUrl.ResolveReference(hrefUrl), nil
 }
 
-// attr(name, defaultValue='') get element attribute value, return string.
+// Attr attr(name, defaultValue='') get element attribute value, return string.
 // outerHtml() get element  outer html, return string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
@@ -53,7 +53,7 @@ func (builtin BuiltinFunctions) Attr(node *goquery.Selection, args ...string) (o
 	return val, nil
 }
 
-// attrConcat(name, text1, $value, [ text2, ... text_n ])
+// AttrConcat attrConcat(name, text1, $value, [ text2, ... text_n ])
 // `name` get element attribute value by name,
 // `text1, text2, ... text_n` The strings that you wish to join together,
 // `$value` is placeholder for get element  text
@@ -81,7 +81,7 @@ func (builtin BuiltinFunctions) AttrConcat(node *goquery.Selection, args ...stri
 	return builder.String(), nil
 }
 
-// attrEmpty(name, defaultValue) get element attribute value, return string.
+// AttrEmpty attrEmpty(name, defaultValue) get element attribute value, return string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
 //		Example string `pagser:".selector->AttrEmpty(href, '#')"`
@@ -99,7 +99,7 @@ func (builtin BuiltinFunctions) AttrEmpty(node *goquery.Selection, args ...strin
 	return value, nil
 }
 
-// attrSplit(name, sep=',', trim='true')  get attribute value and split by separator to array string, return []string.
+// AttrSplit attrSplit(name, sep=',', trim='true')  get attribute value and split by separator to array string, return []string.
 //	struct {
 //		Examples []string `pagser:".selector->attrSplit('keywords', ',')"`
 //	}
@@ -130,7 +130,7 @@ func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...strin
 	return list, nil
 }
 
-// eachAttr() get each element attribute value, return []string.
+// EachAttr eachAttr() get each element attribute value, return []string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
 //		Examples []string `pagser:".selector->eachAttr(href)"`
@@ -147,7 +147,7 @@ func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string
 	return list, nil
 }
 
-// eachAttrEmpty(defaultValue) get each element attribute value, return []string.
+// EachAttrEmpty eachAttrEmpty(defaultValue) get each element attribute value, return []string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
 //		Examples []string `pagser:".selector->eachAttrEmpty(href, '#')"`
@@ -169,7 +169,7 @@ func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...s
 	return list, nil
 }
 
-// eachHtml() get each element inner html, return []string.
+// EachHtml eachHtml() get each element inner html, return []string.
 // eachTextEmpty(defaultValue) get each element text, return []string.
 //	struct {
 //		Examples []string `pagser:".selector->eachHtml()"`
@@ -191,7 +191,7 @@ func (builtin BuiltinFunctions) EachHtml(node *goquery.Selection, args ...string
 	return list, nil
 }
 
-// eachOutHtml() get each element outer html, return []string.
+// EachOutHtml eachOutHtml() get each element outer html, return []string.
 //	struct {
 //		Examples []string `pagser:".selector->eachOutHtml()"`
 //	}
@@ -212,7 +212,7 @@ func (builtin BuiltinFunctions) EachOutHtml(node *goquery.Selection, args ...str
 	return list, nil
 }
 
-// eachText() get each element text, return []string.
+// EachText eachText() get each element text, return []string.
 //	struct {
 //		Examples []string `pagser:".selector->eachText('')"`
 //	}
@@ -224,7 +224,7 @@ func (builtin BuiltinFunctions) EachText(node *goquery.Selection, args ...string
 	return list, nil
 }
 
-// eachTextEmpty(defaultValue) get each element text, return []string.
+// EachTextEmpty eachTextEmpty(defaultValue) get each element text, return []string.
 //	struct {
 //		Examples []string `pagser:".selector->eachTextEmpty('')"`
 //	}
@@ -244,7 +244,7 @@ func (builtin BuiltinFunctions) EachTextEmpty(node *goquery.Selection, args ...s
 	return list, nil
 }
 
-// eachTextJoin(sep) get each element text and join to string, return string.
+// EachTextJoin eachTextJoin(sep) get each element text and join to string, return string.
 //	struct {
 //		Example string `pagser:".selector->eachTextJoin(',')"`
 //	}
@@ -260,7 +260,7 @@ func (builtin BuiltinFunctions) EachTextJoin(node *goquery.Selection, args ...st
 	return strings.Join(list, sep), nil
 }
 
-// eqAndAttr(index, name) reduces the set of matched elements to the one at the specified index, and attr() return string.
+// EqAndAttr eqAndAttr(index, name) reduces the set of matched elements to the one at the specified index, and attr() return string.
 //	struct {
 //		Example string `pagser:".selector->eqAndAttr(0, href)"`
 //	}
@@ -277,7 +277,7 @@ func (builtin BuiltinFunctions) EqAndAttr(node *goquery.Selection, args ...strin
 	return node.Eq(idx).AttrOr(name, ""), nil
 }
 
-// eqAndHtml(index) reduces the set of matched elements to the one at the specified index, and html() return string.
+// EqAndHtml eqAndHtml(index) reduces the set of matched elements to the one at the specified index, and html() return string.
 //	struct {
 //		Example string `pagser:".selector->eqAndHtml(0)"`
 //	}
@@ -293,7 +293,7 @@ func (builtin BuiltinFunctions) EqAndHtml(node *goquery.Selection, args ...strin
 	return node.Eq(idx).Html()
 }
 
-// eqAndOutHtml(index) reduces the set of matched elements to the one at the specified index, and outHtml() return string.
+// EqAndOutHtml eqAndOutHtml(index) reduces the set of matched elements to the one at the specified index, and outHtml() return string.
 //	struct {
 //		Example string `pagser:".selector->eqAndOutHtml(0)"`
 //	}
@@ -309,7 +309,7 @@ func (builtin BuiltinFunctions) EqAndOutHtml(node *goquery.Selection, args ...st
 	return goquery.OuterHtml(node.Eq(idx))
 }
 
-// eqAndText(index) reduces the set of matched elements to the one at the specified index, return string.
+// EqAndText eqAndText(index) reduces the set of matched elements to the one at the specified index, return string.
 //	struct {
 //		Example string `pagser:".selector->eqAndText(0)"`
 //	}
@@ -325,7 +325,7 @@ func (builtin BuiltinFunctions) EqAndText(node *goquery.Selection, args ...strin
 	return strings.TrimSpace(node.Eq(idx).Text()), nil
 }
 
-// html() get element inner html, return string.
+// Html html() get element inner html, return string.
 //	struct {
 //		Example string `pagser:".selector->html()"`
 //	}
@@ -333,7 +333,7 @@ func (builtin BuiltinFunctions) Html(node *goquery.Selection, args ...string) (o
 	return node.Html()
 }
 
-// outerHtml() get element  outer html, return string.
+// OutHtml outerHtml() get element  outer html, return string.
 //	struct {
 //		Example string `pagser:".selector->outerHtml()"`
 //	}
@@ -345,7 +345,7 @@ func (builtin BuiltinFunctions) OutHtml(node *goquery.Selection, args ...string)
 	return html, nil
 }
 
-// size() returns the number of elements in the Selection object, return int.
+// Size size() returns the number of elements in the Selection object, return int.
 //	struct {
 //		Size int `pagser:".selector->size()"`
 //	}
@@ -353,7 +353,7 @@ func (builtin BuiltinFunctions) Size(node *goquery.Selection, args ...string) (o
 	return node.Size(), nil
 }
 
-//text() get element  text, return string, this is default function, if not define function in struct tag.
+// Text text() get element  text, return string, this is default function, if not define function in struct tag.
 //	struct {
 //		Example string `pagser:".selector->text()"`
 //	}
@@ -361,7 +361,7 @@ func (builtin BuiltinFunctions) Text(node *goquery.Selection, args ...string) (o
 	return strings.TrimSpace(node.Text()), nil
 }
 
-// textConcat(text1, $value, [ text2, ... text_n ])
+// TextConcat textConcat(text1, $value, [ text2, ... text_n ])
 // The `text1, text2, ... text_n` strings that you wish to join together,
 // `$value` is placeholder for get element  text, return string.
 //	struct {
@@ -383,7 +383,7 @@ func (builtin BuiltinFunctions) TextConcat(node *goquery.Selection, args ...stri
 	return builder.String(), nil
 }
 
-// textEmpty(defaultValue) get element text, if empty will return defaultValue, return string.
+// TextEmpty textEmpty(defaultValue) get element text, if empty will return defaultValue, return string.
 //	struct {
 //		Example string `pagser:".selector->TextEmpty('')"`
 //	}
@@ -399,7 +399,7 @@ func (builtin BuiltinFunctions) TextEmpty(node *goquery.Selection, args ...strin
 	return value, nil
 }
 
-// textSplit(sep=',', trim='true') get element text and split by separator to array string, return []string.
+// TextSplit textSplit(sep=',', trim='true') get element text and split by separator to array string, return []string.
 //	struct {
 //		Examples []string `pagser:".selector->textSplit('|')"`
 //	}

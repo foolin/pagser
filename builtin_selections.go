@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-// Builtin functions are registered with a lowercase initial, eg: Text -> text()
+// BuiltinSelections builtin selection functions are registered with a lowercase initial, eg: Text -> text()
 type BuiltinSelections struct {
 }
 
-// child(selector='') gets the child elements of each element in the Selection,
+// Child child(selector='') gets the child elements of each element in the Selection,
 // Filtered by the specified selector if selector not empty,
 // It returns Selection object containing these elements for nested struct..
 //	struct {
@@ -30,7 +30,7 @@ func (builtin BuiltinSelections) Child(node *goquery.Selection, args ...string) 
 	return node.Children(), nil
 }
 
-// eq(index) reduces the set of matched elements to the one at the specified index.
+// Eq eq(index) reduces the set of matched elements to the one at the specified index.
 // If a negative index is given, it counts backwards starting at the end of the set.
 // It returns a Selection object for nested struct, and an empty Selection object if the
 // index is invalid.
@@ -51,7 +51,7 @@ func (builtin BuiltinSelections) Eq(node *goquery.Selection, args ...string) (ou
 	return node.Eq(idx), nil
 }
 
-// first() First reduces the set of matched elements to the first in the set.
+// First first() First reduces the set of matched elements to the first in the set.
 // It returns a new Selection object, and an empty Selection object if the
 // the selection is empty.
 // It returns Selection object containing these elements for nested struct.
@@ -64,7 +64,7 @@ func (builtin BuiltinSelections) First(node *goquery.Selection, args ...string) 
 	return node.First(), nil
 }
 
-// last(selector='') reduces the set of matched elements to the last in the set.
+// Last last(selector='') reduces the set of matched elements to the last in the set.
 // It returns a new Selection object, and an empty Selection object if
 // the selection is empty.
 //	struct {
@@ -76,7 +76,7 @@ func (builtin BuiltinSelections) Last(node *goquery.Selection, args ...string) (
 	return node.Last(), nil
 }
 
-// next(selector='') gets the immediately following sibling of each element in the Selection.
+// Next next(selector='') gets the immediately following sibling of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
 // It returns Selection object containing these elements for nested struct.
 //	struct {
@@ -95,7 +95,7 @@ func (builtin BuiltinSelections) Next(node *goquery.Selection, args ...string) (
 	return node.Next(), nil
 }
 
-// parent(selector='') gets the parent elements of each element in the Selection.
+// Parent parent(selector='') gets the parent elements of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
 // It returns Selection object containing these elements for nested struct.
 //	struct {
@@ -114,7 +114,7 @@ func (builtin BuiltinSelections) Parent(node *goquery.Selection, args ...string)
 	return node.Parent(), nil
 }
 
-// parents(selector='') gets the parent elements of each element in the Selection.
+// Parents parents(selector='') gets the parent elements of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
 // It returns Selection object containing these elements for nested struct.
 //	struct {
@@ -133,7 +133,7 @@ func (builtin BuiltinSelections) Parents(node *goquery.Selection, args ...string
 	return node.Parents(), nil
 }
 
-// parentsUntil(selector) gets the ancestors of each element in the Selection, up to but
+// ParentsUntil parentsUntil(selector) gets the ancestors of each element in the Selection, up to but
 // not including the element matched by the selector. It returns a new Selection
 // object containing the matched elements.
 // It returns Selection object containing these elements for nested struct.
@@ -150,7 +150,7 @@ func (builtin BuiltinSelections) ParentsUntil(node *goquery.Selection, args ...s
 	return node.ParentsUntil(selector), nil
 }
 
-// prev() gets the immediately preceding sibling of each element in the Selection.
+// Prev prev() gets the immediately preceding sibling of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
 // It returns Selection object containing these elements for nested struct.
 //	struct {
@@ -169,7 +169,7 @@ func (builtin BuiltinSelections) Prev(node *goquery.Selection, args ...string) (
 	return node.Prev(), nil
 }
 
-// siblings() gets the siblings of each element in the Selection.
+// Siblings siblings() gets the siblings of each element in the Selection.
 // Filtered by the specified selector if selector not empty,
 // It returns Selection object containing these elements for nested struct.
 //	struct {
