@@ -19,7 +19,7 @@ func (p *Pagser) Parse(v interface{}, document string) (err error) {
 	return p.ParseDocument(v, reader)
 }
 
-// Parse parse html to struct
+// ParseReader parse html to struct
 func (p *Pagser) ParseReader(v interface{}, reader io.Reader) (err error) {
 	doc, err := goquery.NewDocumentFromReader(reader)
 	if err != nil {
@@ -33,6 +33,7 @@ func (p *Pagser) ParseDocument(v interface{}, document *goquery.Document) (err e
 	return p.ParseSelection(v, document.Selection)
 }
 
+// ParseSelection parse selection to struct
 func (p *Pagser) ParseSelection(v interface{}, selection *goquery.Selection) (err error) {
 	return p.doParse(v, nil, selection)
 }

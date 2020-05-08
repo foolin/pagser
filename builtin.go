@@ -5,7 +5,7 @@ import (
 )
 
 // CallFunc write function interface
-
+//
 // # Define Global Function
 //
 //	func MyFunc(node *goquery.Selection, args ...string) (out interface{}, err error) {

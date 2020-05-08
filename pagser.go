@@ -16,9 +16,9 @@ import (
 // Pagser the page parser
 type Pagser struct {
 	Config Config
-	//ctxTags  map[string]*tagTokenizer // tag value => tagTokenizer
+	//mapTags  map[string]*tagTokenizer // tag value => tagTokenizer
 	mapTags sync.Map //map[string]*tagTokenizer
-	//ctxFuncs map[string]CallFunc      // name => func
+	//mapFuncs map[string]CallFunc      // name => func
 	mapFuncs sync.Map //map[string]CallFunc
 }
 
