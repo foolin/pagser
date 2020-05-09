@@ -130,7 +130,7 @@ func (builtin BuiltinFunctions) AttrSplit(node *goquery.Selection, args ...strin
 	return list, nil
 }
 
-// EachAttr eachAttr() get each element attribute value, return []string.
+// EachAttr eachAttr(name) get each element attribute value, return []string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
 //		Examples []string `pagser:".selector->eachAttr(href)"`
@@ -147,14 +147,14 @@ func (builtin BuiltinFunctions) EachAttr(node *goquery.Selection, args ...string
 	return list, nil
 }
 
-// EachAttrEmpty eachAttrEmpty(defaultValue) get each element attribute value, return []string.
+// EachAttrEmpty eachAttrEmpty(name, defaultValue) get each element attribute value, return []string.
 //	//<a href="https://github.com/foolin/pagser">Pagser</a>
 //	struct {
 //		Examples []string `pagser:".selector->eachAttrEmpty(href, '#')"`
 //	}
 func (builtin BuiltinFunctions) EachAttrEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("attr(name) must has name")
+		return "", fmt.Errorf("eachAttrEmpty(name) must has name")
 	}
 	name := args[0]
 	defaultValue := args[1]
@@ -385,7 +385,7 @@ func (builtin BuiltinFunctions) TextConcat(node *goquery.Selection, args ...stri
 
 // TextEmpty textEmpty(defaultValue) get element text, if empty will return defaultValue, return string.
 //	struct {
-//		Example string `pagser:".selector->TextEmpty('')"`
+//		Example string `pagser:".selector->textEmpty('')"`
 //	}
 func (builtin BuiltinFunctions) TextEmpty(node *goquery.Selection, args ...string) (out interface{}, err error) {
 	if len(args) < 1 {
