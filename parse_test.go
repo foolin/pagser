@@ -74,6 +74,7 @@ type ParseData struct {
 	H1                  string   `pagser:"h1"`
 	H1Text              string   `pagser:"h1->text()"`
 	H1TextEmpty         string   `pagser:"h1->textEmpty('')"`
+	TextEmptyNoData     string   `pagser:".empty->textEmpty('nodata')"`
 	H1Html              string   `pagser:"h1->html()"`
 	H1OutHtml           string   `pagser:"h1->outerHtml()"`
 	SameFuncValue       string   `pagser:"h1->SameFunc()"`
