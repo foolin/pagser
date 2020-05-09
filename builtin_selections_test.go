@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+//test errors
 func TestBuiltinSelectionsErrors(t *testing.T) {
 	tests := []funcWantError{
 		//not args
