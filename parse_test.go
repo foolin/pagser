@@ -112,7 +112,7 @@ type ParseData struct {
 	} `pagser:".group:last-child"`
 	NavFirstID             int            `pagser:".navlink li:first-child->attrEmpty(id, 0)"`
 	NavLastID              uint           `pagser:".navlink li:last-child->attr(id)"`
-	NavLastData            uint           `pagser:".navlink li:last-child->attr(data, 'nodata')"`
+	NavLastData            string         `pagser:".navlink li:last-child->attr(data, 'nodata')"`
 	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrEmpty(id, -999)"`
 	NavTextList            []string       `pagser:".navlink li"`
 	NavEachText            []string       `pagser:".navlink li->eachText()"`
@@ -247,15 +247,11 @@ func (spd SubPageData) SameFunc(selection *goquery.Selection, args ...string) (o
 	return "Sub-Struct-Same-Func-" + selection.Text(), nil
 }
 
-// Page parse from https://github.com/trending
-type GithubData struct {
-	Title    string `pagser:"title"`
-	RepoList []struct {
-		Name        string `pagser:"h1"`
-		Description string `pagser:"h1 + p"`
-		Stars       string `pagser:"a.muted-link->eqAndText(0)"`
-		Repo        string `pagser:"h1 a->attrConcat('href', 'https://github.com', $value, '?from=pagser')"`
-	} `pagser:"article.Box-row"`
+// Page parse from https://httpbin.org
+type HttpBinData struct {
+	Title       string `pagser:"title"`
+	Version     string `pagser:".version->text()"`
+	Description string `pagser:".description->text()"`
 }
 
 func TestParse(t *testing.T) {
@@ -302,7 +298,7 @@ func TestPagser_ParseDocument(t *testing.T) {
 }
 
 func TestPagser_ParseReader(t *testing.T) {
-	res, err := http.Get("https://github.com/trending")
+	res, err := http.Get("https://httpbin.org")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -310,7 +306,7 @@ func TestPagser_ParseReader(t *testing.T) {
 
 	p := New()
 
-	var data GithubData
+	var data HttpBinData
 	err = p.ParseReader(&data, res.Body)
 	if err != nil {
 		t.Fatal(err)
