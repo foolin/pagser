@@ -61,6 +61,9 @@ const rawParseHtml = `
 			<li class="item" id="8" name="float" value="678.90">678.90</li>
 		</ul>
 	</div>
+	<div class="empty">
+		<span></span><span></span>
+	<div>
 </body>
 </html>
 `
@@ -108,10 +111,12 @@ type ParseData struct {
 	} `pagser:".group:last-child"`
 	NavFirstID             int            `pagser:".navlink li:first-child->attrEmpty(id, 0)"`
 	NavLastID              uint           `pagser:".navlink li:last-child->attr(id)"`
+	NavLastData            uint           `pagser:".navlink li:last-child->attr(data, 'nodata')"`
 	NavFirstIDDefaultValue int            `pagser:".navlink li:first-child->attrEmpty(id, -999)"`
 	NavTextList            []string       `pagser:".navlink li"`
 	NavEachText            []string       `pagser:".navlink li->eachText()"`
 	NavEachTextEmpty       []string       `pagser:".navlink li->eachTextEmpty('')"`
+	NavEachTextEmptyNoData []string       `pagser:".empty span->eachTextEmpty('nodata')"`
 	NavEachAttrID          []string       `pagser:".navlink li->eachAttr(id)"`
 	NavEachAttrEmptyID     []string       `pagser:".navlink li->eachAttrEmpty(id, -1)"`
 	NavEachHtml            []string       `pagser:".navlink li->eachHtml()"`

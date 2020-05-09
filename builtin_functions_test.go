@@ -51,6 +51,8 @@ func TestBuiltinFunctionsErrors(t *testing.T) {
 		{true, "eachAttrEmpty", []string{"href"}, `<a href="/foo">a</a>`},
 		//html error
 		//{true, "eachOutHtml", []string{}, `</a>abc<a>`},
+		//not default value
+		{true, "eachTextEmpty", []string{}, `<a href="/foo">a</a>`},
 		//not index value
 		{true, "eqAndAttr", []string{}, `<a href="/foo">a</a>`},
 		//not name value
